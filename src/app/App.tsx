@@ -8,25 +8,7 @@ import { InfoFaqScreen } from './components/InfoFaqScreen';
 
 type Screen = 'home' | 'map' | 'scavenger' | 'signup' | 'info';
 
-// Booth-shaped home icon SVG
-const BoothIcon = ({ active }: { active: boolean }) => (
-  <svg
-    viewBox="0 0 24 24"
-    fill="none"
-    strokeWidth={active ? 2.5 : 2}
-    stroke="currentColor"
-    className="w-6 h-6"
-  >
-    {/* roof / awning */}
-    <path d="M2 9 L12 3 L22 9" strokeLinejoin="round" strokeLinecap="round" />
-    {/* front panel (banner) */}
-    <rect x="3" y="9" width="18" height="3" rx="0.5" fill={active ? 'currentColor' : 'none'} opacity={active ? 0.3 : 1} />
-    {/* booth walls */}
-    <path d="M4 12 L4 21 L20 21 L20 12" strokeLinejoin="round" strokeLinecap="round" />
-    {/* counter / window */}
-    <path d="M9 21 L9 15 L15 15 L15 21" strokeLinejoin="round" strokeLinecap="round" />
-  </svg>
-);
+const HOME_ICON = '/home-icon.png';
 
 const navItems = [
   { id: 'home',      label: 'Home',  icon: null },
@@ -78,7 +60,19 @@ export default function App() {
               >
                 <div className="flex flex-col items-center gap-1">
                   {id === 'home' ? (
-                    <BoothIcon active={isActive} />
+                    <span
+                      className="w-6 h-6 shrink-0 inline-block bg-current"
+                      style={{
+                        maskImage: `url(${HOME_ICON})`,
+                        maskSize: 'contain',
+                        maskRepeat: 'no-repeat',
+                        maskPosition: 'center',
+                        WebkitMaskImage: `url(${HOME_ICON})`,
+                        WebkitMaskSize: 'contain',
+                        WebkitMaskRepeat: 'no-repeat',
+                        WebkitMaskPosition: 'center',
+                      }}
+                    />
                   ) : (
                     Icon && <Icon className={`w-6 h-6 ${isActive ? 'stroke-[2.5px]' : ''}`} />
                   )}

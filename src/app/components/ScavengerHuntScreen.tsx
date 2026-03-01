@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
-import { ChevronLeft, QrCode, CheckCircle2, Circle, Trophy, Printer } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { ChevronLeft, QrCode, CheckCircle2, Circle, Trophy, Printer, X, Camera } from 'lucide-react';
+import { Html5Qrcode } from 'html5-qrcode';
 
 const SCAVENGER_STORAGE_KEY = 'thurtene-scavenger-tasks';
+const RAFFLE_ENTRY_KEY = 'thurtene-scavenger-raffle-entry';
+const SCANNER_ELEMENT_ID = 'thurtene-qr-scanner';
 
 interface Task {
   id: number;
@@ -45,14 +48,40 @@ function loadSavedTasks(): Task[] {
   return initialTasks;
 }
 
+/** Progress is stored in localStorage: per device/browser only. Other phones do not see your checkmarks. */
+function getSavedRaffleEntry(): { name: string; phone: string } | null {
+  try {
+    const raw = localStorage.getItem(RAFFLE_ENTRY_KEY);
+    if (raw) {
+      const o = JSON.parse(raw) as { name?: string; phone?: string };
+      if (o && typeof o.name === 'string' && typeof o.phone === 'string') return o;
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+/** Parse section letter from scanned QR (URL or hash like #scavenger-section-A). */
+function parseSectionFromScannedText(text: string): string | null {
+  const match = text.match(/scavenger-section-([A-E])/i);
+  return match ? match[1].toUpperCase() : null;
+}
+
 export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const [tasks, setTasks] = useState<Task[]>(loadSavedTasks);
   const [codeInput, setCodeInput] = useState('');
   const [showCodeEntry, setShowCodeEntry] = useState(false);
   const [codeError, setCodeError] = useState('');
   const [showQrPrint, setShowQrPrint] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
+  const [scannerError, setScannerError] = useState<string | null>(null);
+  const [showEntryModal, setShowEntryModal] = useState(false);
+  const [entryName, setEntryName] = useState('');
+  const [entryPhone, setEntryPhone] = useState('');
+  const qrScannerRef = useRef<Html5Qrcode | null>(null);
 
-  // Persist tasks whenever they change
+  // Persist tasks whenever they change (per device only – localStorage)
   useEffect(() => {
     localStorage.setItem(SCAVENGER_STORAGE_KEY, JSON.stringify(tasks));
   }, [tasks]);
@@ -68,6 +97,55 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
     );
     window.location.hash = '#scavenger';
   }, []);
+
+  // When all sections done, show raffle entry modal once if not already submitted
+  useEffect(() => {
+    const allDone = tasks.every((t) => t.completed);
+    if (allDone && !getSavedRaffleEntry()) setShowEntryModal(true);
+  }, [tasks]);
+
+  // Camera scanner: start when showScanner true, cleanup when false
+  useEffect(() => {
+    if (!showScanner) return;
+    setScannerError(null);
+    const startScanner = async () => {
+      try {
+        const scanner = new Html5Qrcode(SCANNER_ELEMENT_ID);
+        qrScannerRef.current = scanner;
+        await scanner.start(
+          { facingMode: 'environment' },
+          { fps: 8, qrbox: { width: 220, height: 220 } },
+          (decodedText) => {
+            const section = parseSectionFromScannedText(decodedText);
+            if (!section) return;
+            scanner.stop().then(() => {
+              qrScannerRef.current = null;
+              setTasks((prev) =>
+                prev.map((t) => (t.section === section ? { ...t, completed: true } : t))
+              );
+              setShowScanner(false);
+            }).catch(() => {
+              qrScannerRef.current = null;
+              setShowScanner(false);
+            });
+          },
+          () => {}
+        );
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Could not start camera';
+        setScannerError(msg);
+        qrScannerRef.current = null;
+      }
+    };
+    startScanner();
+    return () => {
+      if (qrScannerRef.current) {
+        qrScannerRef.current.stop().catch(() => {});
+        qrScannerRef.current.clear();
+        qrScannerRef.current = null;
+      }
+    };
+  }, [showScanner]);
 
   const completedCount = tasks.filter((t) => t.completed).length;
   const totalTasks = tasks.length;
@@ -97,6 +175,18 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
   );
   const qrImageUrl = (url: string) =>
     `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+
+  const handleRaffleEntrySubmit = () => {
+    const name = entryName.trim();
+    const phone = entryPhone.trim();
+    if (!name || !phone) return;
+    try {
+      localStorage.setItem(RAFFLE_ENTRY_KEY, JSON.stringify({ name, phone }));
+      setShowEntryModal(false);
+    } catch {
+      // ignore
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -162,9 +252,11 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
           {!showCodeEntry ? (
             <div className="space-y-2">
               <button
+                type="button"
+                onClick={() => setShowScanner(true)}
                 className="w-full carnival-gradient text-primary-foreground py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow active:scale-[0.98] transition-transform"
               >
-                <QrCode className="w-5 h-5" />
+                <Camera className="w-5 h-5" />
                 Scan QR Code at Booth
               </button>
               <button
@@ -301,7 +393,7 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
               🎉 You Did It!
             </div>
             <p className="text-white/90 text-sm mb-4 leading-relaxed">
-              You've visited all five sections. You've been automatically entered into our <strong>raffle to win a gift card!</strong> Winners will be announced at the end of the carnival.
+              You've visited all five sections. {getSavedRaffleEntry() ? "You're entered in our raffle—we'll notify you if you win!" : 'Enter your details below to be entered for the gift card raffle.'}
             </p>
             <button
               onClick={() => onNavigate('info')}
@@ -312,6 +404,83 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
           </div>
         )}
       </div>
+
+      {/* Camera QR scanner modal */}
+      {showScanner && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-background">
+          <div className="flex items-center justify-between p-4 border-b border-border bg-card">
+            <span className="text-sm font-semibold text-foreground">Scan booth QR code</span>
+            <button
+              type="button"
+              onClick={() => setShowScanner(false)}
+              className="p-2 rounded-full bg-muted text-foreground hover:bg-secondary"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          {scannerError && (
+            <div className="px-4 py-3 bg-destructive/10 text-destructive text-sm">
+              {scannerError}
+              <br />
+              <span className="text-muted-foreground">Use &quot;Enter Code Manually&quot; or open the QR link on this phone instead.</span>
+            </div>
+          )}
+          <div className="flex-1 flex items-center justify-center p-4 min-h-0">
+            <div id={SCANNER_ELEMENT_ID} className="w-full max-w-[280px] rounded-xl overflow-hidden" />
+          </div>
+          <p className="text-center text-xs text-muted-foreground pb-6 px-4">
+            Point your camera at the section QR code at the booth
+          </p>
+        </div>
+      )}
+
+      {/* Raffle entry modal – when they finish all 5 sections */}
+      {showEntryModal && (
+        <>
+          <div className="fixed inset-0 bg-black/60 z-40" onClick={() => setShowEntryModal(false)} />
+          <div className="fixed left-4 right-4 top-1/2 -translate-y-1/2 z-50 bg-card border-2 border-primary rounded-2xl shadow-2xl p-5">
+            <h3 className="text-lg font-bold text-foreground mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+              You&apos;re in! Enter to win
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Leave your name and phone number so we can contact you if you win the gift card raffle.
+            </p>
+            <label className="block text-xs font-semibold text-foreground mb-1">Name</label>
+            <input
+              type="text"
+              value={entryName}
+              onChange={(e) => setEntryName(e.target.value)}
+              placeholder="Your name"
+              className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground text-sm mb-3"
+            />
+            <label className="block text-xs font-semibold text-foreground mb-1">Phone number</label>
+            <input
+              type="tel"
+              value={entryPhone}
+              onChange={(e) => setEntryPhone(e.target.value)}
+              placeholder="(555) 000-0000"
+              className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground text-sm mb-4"
+            />
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleRaffleEntrySubmit}
+                disabled={!entryName.trim() || !entryPhone.trim()}
+                className="flex-1 bg-primary text-primary-foreground py-3 rounded-xl font-bold disabled:opacity-50"
+              >
+                Submit
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowEntryModal(false)}
+                className="px-4 py-3 rounded-xl border border-border text-muted-foreground font-semibold"
+              >
+                Later
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
