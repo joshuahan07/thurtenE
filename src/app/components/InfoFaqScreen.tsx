@@ -44,18 +44,18 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#180C04]">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-[#1C0E06] border-b-2 border-[#E85B1A] p-4 flex items-center justify-between shadow-lg">
+      <div className="bg-card border-b-2 border-primary p-4 flex items-center justify-between shadow-lg">
         <button
           onClick={() => onNavigate('home')}
-          className="text-[#F5E8D8] p-1 flex items-center gap-1 hover:text-[#F5A921] transition-colors"
+          className="text-foreground p-1 flex items-center gap-1 hover:text-accent transition-colors"
         >
           <ChevronLeft className="w-5 h-5" />
           <span className="text-sm font-semibold">Back</span>
         </button>
         <h1
-          className="text-lg font-bold text-[#F5E8D8]"
+          className="text-lg font-bold text-foreground"
           style={{ fontFamily: "'Playfair Display', serif" }}
         >
           Info & FAQ
@@ -65,36 +65,36 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
 
       <div className="p-4 pb-24 space-y-4">
         {/* Quick Info Card */}
-        <div className="bg-[#231208] border border-[#4A2010] rounded-xl p-4 shadow">
+        <div className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-primary">
           <h2
-            className="text-base font-bold text-[#F5E8D8] mb-3 pb-2 border-b border-[#4A2010]"
+            className="text-base font-bold text-foreground mb-3 pb-2 border-b border-border"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Quick Info
           </h2>
           <div className="space-y-3">
             <div>
-              <p className="text-xs text-[#F5A921] font-semibold uppercase tracking-wide mb-0.5">Dates</p>
-              <p className="text-sm text-[#F5E8D8]">April 17–19, 2026</p>
+              <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-0.5">Dates</p>
+              <p className="text-sm text-foreground">April 17–19, 2026</p>
             </div>
             <div>
-              <p className="text-xs text-[#F5A921] font-semibold uppercase tracking-wide mb-0.5">Hours</p>
-              <p className="text-sm text-[#F5E8D8]">Thu & Fri: 11 AM – 10 PM &nbsp;·&nbsp; Sat: 11 AM – 9 PM</p>
+              <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-0.5">Hours</p>
+              <p className="text-sm text-foreground">Thu & Fri: 11 AM – 10 PM &nbsp;·&nbsp; Sat: 11 AM – 9 PM</p>
             </div>
             <div>
-              <p className="text-xs text-[#F5A921] font-semibold uppercase tracking-wide mb-0.5">Location</p>
-              <p className="text-sm text-[#F5E8D8]">Danforth Campus, Washington University in St. Louis</p>
+              <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-0.5">Location</p>
+              <p className="text-sm text-foreground">Danforth Campus, Washington University in St. Louis</p>
             </div>
             <div>
-              <p className="text-xs text-[#F5A921] font-semibold uppercase tracking-wide mb-0.5">Admission</p>
-              <p className="text-sm text-[#F5E8D8]">Free Entry</p>
+              <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-0.5">Admission</p>
+              <p className="text-sm text-foreground">Free Entry</p>
             </div>
           </div>
           <a
             href="https://maps.google.com/?q=Washington+University+in+St+Louis"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full mt-4 flex items-center justify-center gap-2 carnival-gradient text-white py-3 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform"
+            className="w-full mt-4 flex items-center justify-center gap-2 bg-primary text-primary-foreground py-3 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform hover:opacity-95"
           >
             <MapPin className="w-4 h-4" />
             Get Directions
@@ -105,33 +105,33 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
         {faqSections.map((section) => {
           const SectionIcon = section.icon;
           return (
-            <div key={section.title} className="bg-[#231208] border border-[#4A2010] rounded-xl p-4 shadow">
-              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-[#4A2010]">
-                <SectionIcon className="w-4 h-4 text-[#E85B1A]" />
+            <div key={section.title} className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-primary">
+              <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
+                <SectionIcon className="w-4 h-4 text-primary" />
                 <h2
-                  className="text-sm font-bold text-[#F5A921] uppercase tracking-widest"
+                  className="text-sm font-bold text-accent uppercase tracking-widest"
                 >
                   {section.title}
                 </h2>
               </div>
               <div className="space-y-1">
                 {section.items.map((item) => (
-                  <div key={item.id} className="border border-[#4A2010] rounded-lg overflow-hidden">
+                  <div key={item.id} className="border border-border rounded-lg overflow-hidden">
                     <button
                       onClick={() => setExpandedId(expandedId === item.id ? null : item.id)}
                       className={`w-full p-3.5 text-left flex justify-between items-center transition-colors ${
-                        expandedId === item.id ? 'bg-[#321508]' : 'bg-[#1C0E06] hover:bg-[#2A1308]'
+                        expandedId === item.id ? 'bg-muted' : 'bg-card hover:bg-secondary'
                       }`}
                     >
-                      <span className="font-medium text-[#F5E8D8] text-sm pr-2">{item.question}</span>
+                      <span className="font-medium text-foreground text-sm pr-2">{item.question}</span>
                       {expandedId === item.id
-                        ? <ChevronUp className="w-4 h-4 text-[#F5A921] shrink-0" />
-                        : <ChevronDown className="w-4 h-4 text-[#C8A884] shrink-0" />
+                        ? <ChevronUp className="w-4 h-4 text-accent shrink-0" />
+                        : <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
                       }
                     </button>
                     {expandedId === item.id && (
-                      <div className="px-4 py-3 border-t border-[#4A2010] bg-[#231208]">
-                        <p className="text-sm text-[#C8A884] leading-relaxed">{item.answer}</p>
+                      <div className="px-4 py-3 border-t border-border bg-card">
+                        <p className="text-sm text-muted-foreground leading-relaxed">{item.answer}</p>
                       </div>
                     )}
                   </div>
@@ -142,19 +142,19 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
         })}
 
         {/* Contact CTA */}
-        <div className="bg-[#231208] border border-[#4A2010] rounded-xl p-4 shadow">
+        <div className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-primary">
           <h3
-            className="font-bold text-[#F5E8D8] mb-1 text-base"
+            className="font-bold text-foreground mb-1 text-base"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Still have questions?
           </h3>
-          <p className="text-sm text-[#C8A884] mb-3">Visit the Thurtene Alumni Tent on-site, or reach out online.</p>
+          <p className="text-sm text-muted-foreground mb-3">Visit the Thurtene Alumni Tent on-site, or reach out online.</p>
           <a
             href="https://www.thurtene.org/"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full flex items-center justify-center carnival-gradient text-white py-3 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform"
+            className="w-full flex items-center justify-center bg-primary text-primary-foreground py-3 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform hover:opacity-95"
           >
             Visit Thurtene.org →
           </a>

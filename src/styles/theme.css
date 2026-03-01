@@ -5,53 +5,51 @@
 :root {
   --font-size: 16px;
 
-  /* Carnival Night Palette */
-  --background: #180C04;
-  --foreground: #F5E8D8;
-  --card: #231208;
-  --card-foreground: #F5E8D8;
-  --popover: #231208;
-  --popover-foreground: #F5E8D8;
+  /* Black & Yellow theme */
+  --background: #0f100d;
+  --foreground: #f5f5f0;
+  --card: #1a1b17;
+  --card-foreground: #f5f5f0;
+  --popover: #1a1b17;
+  --popover-foreground: #f5f5f0;
 
-  /* Carnival red-orange */
-  --primary: #E85B1A;
-  --primary-foreground: #FFFFFF;
+  /* Yellow accent */
+  --primary: #fbee08;
+  --primary-foreground: #0f100d;
 
-  /* Golden amber */
-  --accent: #F5A921;
-  --accent-foreground: #1A0A04;
+  --accent: #fbee08;
+  --accent-foreground: #0f100d;
 
-  /* Teal */
-  --secondary: #1D8A6E;
-  --secondary-foreground: #FFFFFF;
+  --secondary: #2a2b24;
+  --secondary-foreground: #f5f5f0;
 
-  --muted: #321508;
-  --muted-foreground: #C8A884;
+  --muted: #1a1b17;
+  --muted-foreground: #8c8d80;
   --destructive: #d4183d;
   --destructive-foreground: #ffffff;
-  --border: #4A2010;
-  --input: #2E1208;
-  --input-background: #2E1208;
-  --switch-background: #4A2010;
+  --border: #2a2b24;
+  --input: #1a1b17;
+  --input-background: #1a1b17;
+  --switch-background: #2a2b24;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: #E85B1A;
+  --ring: #fbee08;
   --radius: 0.75rem;
 
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --chart-1: #fbee08;
+  --chart-2: #e6d906;
+  --chart-3: #d1c405;
+  --chart-4: #bcaf04;
+  --chart-5: #a79a03;
 
-  --sidebar: #1C0E06;
-  --sidebar-foreground: #F5E8D8;
-  --sidebar-primary: #E85B1A;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #321508;
-  --sidebar-accent-foreground: #F5E8D8;
-  --sidebar-border: #4A2010;
-  --sidebar-ring: #E85B1A;
+  --sidebar: #1a1b17;
+  --sidebar-foreground: #f5f5f0;
+  --sidebar-primary: #fbee08;
+  --sidebar-primary-foreground: #0f100d;
+  --sidebar-accent: #1a1b17;
+  --sidebar-accent-foreground: #f5f5f0;
+  --sidebar-border: #2a2b24;
+  --sidebar-ring: #fbee08;
 }
 
 @theme inline {
@@ -115,11 +113,11 @@
 }
 
 @layer utilities {
-  .carnival-gradient { background: linear-gradient(135deg, #E85B1A, #F5A921); }
+  .carnival-gradient { background: linear-gradient(135deg, #0f100d, #fbee08); }
   .carnival-stripe {
     background: repeating-linear-gradient(
       45deg, transparent, transparent 8px,
-      rgba(245,169,33,0.07) 8px, rgba(245,169,33,0.07) 16px
+      rgba(251,238,8,0.06) 8px, rgba(251,238,8,0.06) 16px
     );
   }
   .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }

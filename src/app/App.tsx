@@ -44,7 +44,7 @@ export default function App() {
   };
 
   return (
-    <div className="size-full bg-[#180C04] overflow-auto">
+    <div className="size-full bg-background overflow-auto">
       {/* Screen Content */}
       <div className="pb-24">
         {currentScreen === 'home'      && <HomeScreen      onNavigate={handleNavigate} />}
@@ -55,7 +55,7 @@ export default function App() {
       </div>
 
       {/* Bottom Navigation Bar */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-[#1C0E06] border-t-2 border-[#E85B1A] z-50 shadow-2xl safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 bg-card border-t-2 border-primary z-50 shadow-2xl safe-bottom">
         <div className="flex">
           {navItems.map(({ id, label, icon: Icon }) => {
             const isActive = currentScreen === id || (id === 'info' && currentScreen === 'signup');
@@ -65,8 +65,8 @@ export default function App() {
                 onClick={() => handleNavigate(id)}
                 className={`flex-1 py-3 px-1 transition-all ${
                   isActive
-                    ? 'text-[#F5A921]'
-                    : 'text-[#C8A884] hover:text-[#F5E8D8] active:text-[#F5A921]'
+                    ? 'text-accent'
+                    : 'text-muted-foreground hover:text-foreground active:text-accent'
                 }`}
               >
                 <div className="flex flex-col items-center gap-1">
@@ -77,7 +77,7 @@ export default function App() {
                   )}
                   <span className="text-[10px] uppercase tracking-widest font-semibold">{label}</span>
                   {isActive && (
-                    <span className="w-1 h-1 rounded-full bg-[#F5A921] block" />
+                    <span className="w-1 h-1 rounded-full bg-accent block" />
                   )}
                 </div>
               </button>

@@ -54,29 +54,29 @@ const booths: Booth[] = [
 ];
 
 const sectionColors: Record<string, string> = {
-  A: '#E85B1A',
-  B: '#F5A921',
-  C: '#1D8A6E',
-  D: '#C45EC4',
-  E: '#3B82F6',
+  A: '#fbee08',
+  B: '#e6d906',
+  C: '#d1c405',
+  D: '#bcaf04',
+  E: '#a79a03',
 };
 
 export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const [selectedBooth, setSelectedBooth] = useState<Booth | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#180C04] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="bg-[#1C0E06] border-b-2 border-[#E85B1A] p-4 flex items-center justify-between shadow-lg">
+      <div className="bg-card border-b-2 border-primary p-4 flex items-center justify-between shadow-lg">
         <button
           onClick={() => onNavigate('home')}
-          className="text-[#F5E8D8] p-1 rounded-lg flex items-center gap-1 hover:text-[#F5A921] transition-colors"
+          className="text-foreground p-1 rounded-lg flex items-center gap-1 hover:text-accent transition-colors"
         >
           <ChevronLeft className="w-5 h-5" />
           <span className="text-sm font-semibold">Back</span>
         </button>
         <h1
-          className="text-lg font-bold text-[#F5E8D8]"
+          className="text-lg font-bold text-foreground"
           style={{ fontFamily: "'Playfair Display', serif" }}
         >
           Carnival Map
@@ -84,12 +84,12 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
         <div className="w-16" />
       </div>
 
-      <p className="text-xs text-center text-[#C8A884] py-2 px-4">
+      <p className="text-xs text-center text-muted-foreground py-2 px-4">
         Tap a numbered badge to see booth details
       </p>
 
       {/* Map Container */}
-      <div className="relative mx-3 rounded-xl overflow-hidden border border-[#4A2010] shadow-xl">
+      <div className="relative mx-3 rounded-xl overflow-hidden border border-border shadow-xl">
         <img
           src={carnivalMap}
           alt="ThurtenE Carnival Map"
@@ -107,7 +107,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
               transform: 'translate(-50%, -50%)',
               width: '18px',
               height: '18px',
-              backgroundColor: sectionColors[booth.section] ?? '#E85B1A',
+              backgroundColor: sectionColors[booth.section] ?? '#fbee08',
               border: '1.5px solid rgba(255,255,255,0.6)',
             }}
           >
@@ -117,18 +117,18 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
       </div>
 
       {/* Section Legend */}
-      <div className="mx-3 mt-3 mb-4 bg-[#231208] border border-[#4A2010] rounded-xl p-3">
-        <p className="text-[10px] text-[#C8A884] uppercase tracking-wider mb-2">Sections</p>
+      <div className="mx-3 mt-3 mb-4 bg-card border border-border rounded-xl p-3">
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2">Sections</p>
         <div className="flex flex-wrap gap-2">
           {Object.entries(sectionColors).map(([section, color]) => (
             <div key={section} className="flex items-center gap-1">
               <span
-                className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] text-white font-bold"
+                className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] text-background font-bold"
                 style={{ backgroundColor: color }}
               >
                 {section}
               </span>
-              <span className="text-xs text-[#C8A884]">Section {section}</span>
+              <span className="text-xs text-muted-foreground">Section {section}</span>
             </div>
           ))}
         </div>
@@ -141,40 +141,40 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
             className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm"
             onClick={() => setSelectedBooth(null)}
           />
-          <div className="fixed bottom-0 left-0 right-0 bg-[#231208] border-t-2 z-50 rounded-t-2xl shadow-2xl"
-            style={{ borderColor: sectionColors[selectedBooth.section] ?? '#E85B1A' }}
+          <div className="fixed bottom-0 left-0 right-0 bg-card border-t-2 z-50 rounded-t-2xl shadow-2xl"
+            style={{ borderColor: sectionColors[selectedBooth.section] ?? '#fbee08' }}
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 bg-[#4A2010] rounded-full" />
+              <div className="w-10 h-1 bg-border rounded-full" />
             </div>
             <div className="p-6 pb-8">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-start gap-3 flex-1">
                   <span
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0 mt-0.5"
-                    style={{ backgroundColor: sectionColors[selectedBooth.section] ?? '#E85B1A' }}
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-background shrink-0 mt-0.5"
+                    style={{ backgroundColor: sectionColors[selectedBooth.section] ?? '#fbee08' }}
                   >
                     {selectedBooth.id}
                   </span>
                   <div>
-                    <p className="text-[10px] uppercase tracking-widest text-[#C8A884] mb-0.5">
+                    <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-0.5">
                       Section {selectedBooth.section}
                     </p>
                     <h2
-                      className="text-xl font-bold text-[#F5E8D8] leading-tight"
+                      className="text-xl font-bold text-foreground leading-tight"
                       style={{ fontFamily: "'Playfair Display', serif" }}
                     >
                       {selectedBooth.name}
                     </h2>
-                    <p className="text-sm text-[#C8A884] mt-1 leading-relaxed">
+                    <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
                       {selectedBooth.description}
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedBooth(null)}
-                  className="ml-3 p-2 rounded-full bg-[#321508] text-[#C8A884] hover:text-[#F5E8D8] transition-colors"
+                  className="ml-3 p-2 rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>

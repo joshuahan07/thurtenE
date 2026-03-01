@@ -4,7 +4,7 @@ import carnivalBg from '../../assets/carnival-hero.jpg';
 
 export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   return (
-    <div className="min-h-screen bg-[#180C04] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Hero Header */}
       <div className="relative overflow-hidden" style={{ minHeight: '300px' }}>
         {/* Background image */}
@@ -14,7 +14,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
           className="absolute inset-0 w-full h-full object-cover"
         />
         {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-[#180C04]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-background" />
         {/* Subtle diagonal stripe overlay for carnival feel */}
         <div
           className="absolute inset-0 carnival-stripe opacity-40"
@@ -25,7 +25,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
           <img
             src={logo}
             alt="ThurtenE Carnival Logo"
-            className="w-28 h-28 object-contain rounded-full shadow-2xl border-2 border-[#F5A921] mb-4"
+            className="w-28 h-28 object-contain rounded-full shadow-2xl border-2 border-accent mb-4"
           />
           <h1
             className="text-4xl font-extrabold text-center text-white tracking-tight drop-shadow-lg"
@@ -33,7 +33,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
           >
             ThurtenE Carnival
           </h1>
-          <p className="mt-2 text-[#F5A921] text-sm font-semibold uppercase tracking-widest drop-shadow">
+          <p className="mt-2 text-accent text-sm font-semibold uppercase tracking-widest drop-shadow">
             April 17 – 19, 2026
           </p>
           <a
@@ -52,8 +52,8 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
       <div className="flex-1 flex flex-col px-5 pt-2 pb-6">
 
         {/* Description card */}
-        <div className="bg-[#231208] border border-[#4A2010] rounded-xl p-5 mb-5 shadow-lg">
-          <p className="text-center text-[#F5E8D8] leading-relaxed">
+        <div className="bg-card border border-border rounded-xl p-5 mb-5 shadow-lg">
+          <p className="text-center text-foreground leading-relaxed">
             Three days of carnival games, live entertainment, incredible food, and prizes — right on the Wash U campus. Your pocket guide to everything ThurtenE.
           </p>
         </div>
@@ -67,15 +67,15 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
           ].map((item) => (
             <div
               key={item.label}
-              className="bg-[#231208] border border-[#4A2010] rounded-xl p-3 flex flex-col items-center shadow"
+              className="bg-card border border-border rounded-xl p-3 flex flex-col items-center shadow"
             >
               <span
-                className="text-2xl font-bold text-[#F5A921]"
+                className="text-2xl font-bold text-accent"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {item.value}
               </span>
-              <span className="text-xs text-[#C8A884] mt-0.5">{item.label}</span>
+              <span className="text-xs text-muted-foreground mt-0.5">{item.label}</span>
             </div>
           ))}
         </div>
@@ -92,17 +92,17 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
 
           <button
             onClick={() => onNavigate('scavenger')}
-            className="w-full bg-[#231208] text-[#F5E8D8] py-5 px-6 text-lg font-bold rounded-xl border-2 border-[#E85B1A] flex items-center justify-center gap-3 shadow hover:bg-[#2E1810] active:scale-[0.98] transition-all"
+            className="w-full bg-card text-foreground py-5 px-6 text-lg font-bold rounded-xl border-2 border-primary flex items-center justify-center gap-3 shadow hover:bg-muted active:scale-[0.98] transition-all"
           >
-            <Search className="w-6 h-6 text-[#E85B1A]" />
+            <Search className="w-6 h-6 text-primary" />
             Join Scavenger Hunt
           </button>
 
           <button
             onClick={() => onNavigate('signup')}
-            className="w-full bg-[#231208] text-[#F5E8D8] py-5 px-6 text-lg font-bold rounded-xl border border-[#4A2010] flex items-center justify-center gap-3 shadow hover:bg-[#2A1510] active:scale-[0.98] transition-all"
+            className="w-full bg-card text-foreground py-5 px-6 text-lg font-bold rounded-xl border border-border flex items-center justify-center gap-3 shadow hover:bg-muted active:scale-[0.98] transition-all"
           >
-            <Bell className="w-6 h-6 text-[#C8A884]" />
+            <Bell className="w-6 h-6 text-muted-foreground" />
             Stay Updated
           </button>
         </div>
@@ -111,7 +111,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
         <div className="mt-5 text-center">
           <button
             onClick={() => onNavigate('info')}
-            className="text-[#F5A921] underline underline-offset-2 text-sm font-semibold hover:text-[#F5C860] transition-colors"
+            className="text-accent underline underline-offset-2 text-sm font-semibold hover:opacity-90 transition-colors"
           >
             View Info &amp; FAQ
           </button>

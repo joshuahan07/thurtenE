@@ -18,11 +18,11 @@ const initialTasks: Task[] = [
 ];
 
 const sectionColors: Record<string, string> = {
-  A: '#E85B1A',
-  B: '#F5A921',
-  C: '#1D8A6E',
-  D: '#C45EC4',
-  E: '#3B82F6',
+  A: '#fbee08',
+  B: '#e6d906',
+  C: '#d1c405',
+  D: '#bcaf04',
+  E: '#a79a03',
 };
 
 export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
@@ -51,18 +51,18 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
   };
 
   return (
-    <div className="min-h-screen bg-[#180C04] flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="bg-[#1C0E06] border-b-2 border-[#E85B1A] p-4 flex items-center justify-between shadow-lg">
+      <div className="bg-card border-b-2 border-primary p-4 flex items-center justify-between shadow-lg">
         <button
           onClick={() => onNavigate('home')}
-          className="text-[#F5E8D8] p-1 rounded-lg flex items-center gap-1 hover:text-[#F5A921] transition-colors"
+          className="text-foreground p-1 rounded-lg flex items-center gap-1 hover:text-accent transition-colors"
         >
           <ChevronLeft className="w-5 h-5" />
           <span className="text-sm font-semibold">Back</span>
         </button>
         <h1
-          className="text-lg font-bold text-[#F5E8D8]"
+          className="text-lg font-bold text-foreground"
           style={{ fontFamily: "'Playfair Display', serif" }}
         >
           Scavenger Hunt
@@ -73,62 +73,62 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
       <div className="flex-1 p-4 pb-24 overflow-y-auto space-y-4">
 
         {/* Prize Banner */}
-        <div className="bg-[#2A1410] border border-[#E85B1A] rounded-xl p-4 flex items-start gap-3">
-          <Trophy className="w-5 h-5 text-[#F5A921] shrink-0 mt-0.5" />
-          <p className="text-sm text-[#F5E8D8] leading-relaxed">
-            Complete all five sections and you'll be entered into a <strong className="text-[#F5A921]">raffle to win a gift card!</strong> Scan the QR code at each booth to unlock it.
+        <div className="bg-card border border-primary rounded-xl p-4 flex items-start gap-3">
+          <Trophy className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+          <p className="text-sm text-foreground leading-relaxed">
+            Complete all five sections and you'll be entered into a <strong className="text-accent">raffle to win a gift card!</strong> Scan the QR code at each booth to unlock it.
           </p>
         </div>
 
         {/* Progress */}
-        <div className="bg-[#231208] border border-[#4A2010] rounded-xl p-4 shadow">
+        <div className="bg-card border border-border rounded-xl p-4 shadow">
           <div className="flex items-baseline gap-2 mb-3">
             <span
-              className="text-4xl font-extrabold text-[#F5A921]"
+              className="text-4xl font-extrabold text-accent"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               {completedCount}
             </span>
-            <span className="text-xl text-[#C8A884]">/ {totalTasks}</span>
-            <span className="text-sm text-[#C8A884] ml-1">sections visited</span>
+            <span className="text-xl text-muted-foreground">/ {totalTasks}</span>
+            <span className="text-sm text-muted-foreground ml-1">sections visited</span>
           </div>
-          <div className="h-3 bg-[#321508] rounded-full overflow-hidden border border-[#4A2010]">
+          <div className="h-3 bg-muted rounded-full overflow-hidden border border-border">
             <div
               className="h-full rounded-full carnival-gradient transition-all duration-500"
               style={{ width: `${progressPct}%` }}
             />
           </div>
-          <p className="text-xs text-[#C8A884] mt-1 text-right">
+          <p className="text-xs text-muted-foreground mt-1 text-right">
             {Math.round(progressPct)}% complete
           </p>
         </div>
 
         {/* QR / Code Entry */}
-        <div className="bg-[#231208] border border-[#4A2010] rounded-xl p-4 shadow">
+        <div className="bg-card border border-border rounded-xl p-4 shadow">
           <div className="flex items-center gap-2 mb-3">
-            <QrCode className="w-4 h-4 text-[#E85B1A]" />
-            <span className="text-xs text-[#F5A921] uppercase tracking-widest font-semibold">
+            <QrCode className="w-4 h-4 text-primary" />
+            <span className="text-xs text-accent uppercase tracking-widest font-semibold">
               Mark a Section Complete
             </span>
           </div>
           {!showCodeEntry ? (
             <div className="space-y-2">
               <button
-                className="w-full carnival-gradient text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow active:scale-[0.98] transition-transform"
+                className="w-full carnival-gradient text-primary-foreground py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow active:scale-[0.98] transition-transform"
               >
                 <QrCode className="w-5 h-5" />
                 Scan QR Code at Booth
               </button>
               <button
                 onClick={() => { setShowCodeEntry(true); setCodeError(''); }}
-                className="w-full bg-[#321508] text-[#F5E8D8] py-3 rounded-xl border border-[#4A2010] font-semibold hover:bg-[#3A1C10] transition-colors"
+                className="w-full bg-muted text-foreground py-3 rounded-xl border border-border font-semibold hover:bg-secondary transition-colors"
               >
                 Enter Code Manually
               </button>
             </div>
           ) : (
             <div className="space-y-2">
-              <label className="block text-xs text-[#C8A884] mb-1 font-semibold uppercase tracking-wide">
+              <label className="block text-xs text-muted-foreground mb-1 font-semibold uppercase tracking-wide">
                 Booth Code
               </label>
               <input
@@ -136,21 +136,21 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
                 value={codeInput}
                 onChange={(e) => { setCodeInput(e.target.value); setCodeError(''); }}
                 placeholder="e.g. SECTION-A"
-                className="w-full bg-[#321508] border border-[#4A2010] rounded-xl px-4 py-3 text-[#F5E8D8] placeholder:text-[#6B4A30] focus:outline-none focus:border-[#E85B1A] text-sm"
+                className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-sm"
               />
               {codeError && (
-                <p className="text-xs text-red-400">{codeError}</p>
+                <p className="text-xs text-destructive">{codeError}</p>
               )}
               <div className="flex gap-2">
                 <button
                   onClick={handleSubmitCode}
-                  className="flex-1 carnival-gradient text-white py-2.5 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform"
+                  className="flex-1 carnival-gradient text-primary-foreground py-2.5 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform"
                 >
                   Submit
                 </button>
                 <button
                   onClick={() => { setShowCodeEntry(false); setCodeInput(''); setCodeError(''); }}
-                  className="px-4 bg-[#321508] border border-[#4A2010] rounded-xl text-[#C8A884] hover:text-[#F5E8D8] font-semibold transition-colors"
+                  className="px-4 bg-muted border border-border rounded-xl text-muted-foreground hover:text-foreground font-semibold transition-colors"
                 >
                   Cancel
                 </button>
@@ -160,8 +160,8 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
         </div>
 
         {/* Task Checklist */}
-        <div className="bg-[#231208] border border-[#4A2010] rounded-xl p-4 shadow">
-          <p className="text-xs text-[#F5A921] uppercase tracking-widest font-semibold mb-3">
+        <div className="bg-card border border-border rounded-xl p-4 shadow">
+          <p className="text-xs text-accent uppercase tracking-widest font-semibold mb-3">
             Sections Checklist
           </p>
           <div className="space-y-2">
@@ -170,26 +170,26 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
                 key={task.id}
                 className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
                   task.completed
-                    ? 'border-[#E85B1A]/40 bg-[#2E1510]'
-                    : 'border-[#4A2010] bg-[#1C0E06]'
+                    ? 'border-primary/40 bg-muted'
+                    : 'border-border bg-card'
                 }`}
               >
                 <span
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-                  style={{ backgroundColor: sectionColors[task.section] ?? '#E85B1A' }}
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-background shrink-0"
+                  style={{ backgroundColor: sectionColors[task.section] ?? '#fbee08' }}
                 >
                   {task.section}
                 </span>
                 {task.completed ? (
-                  <CheckCircle2 className="w-5 h-5 text-[#E85B1A] shrink-0" />
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
                 ) : (
-                  <Circle className="w-5 h-5 text-[#4A2010] shrink-0" />
+                  <Circle className="w-5 h-5 text-border shrink-0" />
                 )}
                 <span
                   className={`text-sm flex-1 ${
                     task.completed
-                      ? 'line-through text-[#6B4A30]'
-                      : 'text-[#F5E8D8]'
+                      ? 'line-through text-muted-foreground'
+                      : 'text-foreground'
                   }`}
                 >
                   {task.name}
@@ -213,7 +213,7 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
             </p>
             <button
               onClick={() => onNavigate('info')}
-              className="bg-white text-[#E85B1A] py-2.5 px-6 rounded-xl font-bold shadow hover:bg-[#FFF8F0] transition-colors"
+              className="bg-foreground text-background py-2.5 px-6 rounded-xl font-bold shadow hover:opacity-90 transition-colors"
             >
               Learn More →
             </button>
