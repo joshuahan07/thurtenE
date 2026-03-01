@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Store, Map, Search, Info } from 'lucide-react';
 import { HomeScreen } from './components/HomeScreen';
 import { InteractiveMapScreen } from './components/InteractiveMapScreen';
@@ -37,6 +37,13 @@ const navItems = [
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
+
+  // When opened via QR code (e.g. #scavenger-section-A), go to scavenger screen
+  useEffect(() => {
+    const hash = window.location.hash;
+    const match = hash.match(/^#scavenger-section-([A-E])$/i);
+    if (match) setCurrentScreen('scavenger');
+  }, []);
 
   const handleNavigate = (screen: string) => {
     setCurrentScreen(screen as Screen);

@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { ChevronLeft, QrCode, CheckCircle2, Circle, Trophy } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronLeft, QrCode, CheckCircle2, Circle, Trophy, Printer } from 'lucide-react';
+
+const SCAVENGER_STORAGE_KEY = 'thurtene-scavenger-tasks';
 
 interface Task {
   id: number;
@@ -25,11 +27,47 @@ const sectionColors: Record<string, string> = {
   E: '#a79a03',
 };
 
+function loadSavedTasks(): Task[] {
+  try {
+    const raw = localStorage.getItem(SCAVENGER_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as Task[];
+      if (Array.isArray(parsed) && parsed.length === 5) {
+        return initialTasks.map((def, i) => ({
+          ...def,
+          completed: parsed[i]?.completed ?? def.completed,
+        }));
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return initialTasks;
+}
+
 export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [tasks, setTasks] = useState<Task[]>(loadSavedTasks);
   const [codeInput, setCodeInput] = useState('');
   const [showCodeEntry, setShowCodeEntry] = useState(false);
   const [codeError, setCodeError] = useState('');
+  const [showQrPrint, setShowQrPrint] = useState(false);
+
+  // Persist tasks whenever they change
+  useEffect(() => {
+    localStorage.setItem(SCAVENGER_STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]);
+
+  // On mount: if URL hash is #scavenger-section-X, mark that section complete (opened from QR)
+  useEffect(() => {
+    const hash = window.location.hash;
+    const match = hash.match(/^#scavenger-section-([A-E])$/i);
+    if (!match) return;
+    const section = match[1].toUpperCase();
+    setTasks((prev) =>
+      prev.map((t) => (t.section === section ? { ...t, completed: true } : t))
+    );
+    window.location.hash = '#scavenger';
+  }, []);
 
   const completedCount = tasks.filter((t) => t.completed).length;
   const totalTasks = tasks.length;
@@ -49,6 +87,16 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
       setCodeError('Code not recognised or already used. Try again!');
     }
   };
+
+  const baseUrl =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}${window.location.pathname || ''}`.replace(/\/$/, '') || window.location.origin
+      : '';
+  const sectionQrUrls = (['A', 'B', 'C', 'D', 'E'] as const).map(
+    (s) => `${baseUrl}#scavenger-section-${s}`
+  );
+  const qrImageUrl = (url: string) =>
+    `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -197,6 +245,50 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Print QR codes for booths */}
+        <div className="bg-card border border-border rounded-xl p-4 shadow">
+          <button
+            type="button"
+            onClick={() => setShowQrPrint(!showQrPrint)}
+            className="w-full flex items-center justify-center gap-2 text-foreground font-semibold text-sm"
+          >
+            <Printer className="w-4 h-4 text-primary" />
+            {showQrPrint ? 'Hide QR codes' : 'Get QR codes to print for each section'}
+          </button>
+          {showQrPrint && baseUrl && (
+            <div className="mt-4 space-y-4 print:block">
+              <p className="text-xs text-muted-foreground">
+                Print this page or screenshot. Place each QR code in Section A, B, C, D, and E. When visitors scan a code, the app opens and checks off that section.
+              </p>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
+                {(['A', 'B', 'C', 'D', 'E'] as const).map((section, i) => (
+                  <div key={section} className="flex flex-col items-center gap-2">
+                    <div className="bg-white p-2 rounded-lg">
+                      <img
+                        src={qrImageUrl(sectionQrUrls[i])}
+                        alt={`Section ${section} QR code`}
+                        width={120}
+                        height={120}
+                        className="w-[120px] h-[120px]"
+                      />
+                    </div>
+                    <span className="text-xs font-bold text-accent">Section {section}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-3 pt-3 border-t border-border space-y-1">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">URLs (for manual entry or custom QR tools)</p>
+                {sectionQrUrls.map((url, i) => (
+                  <p key={i} className="text-[10px] text-foreground break-all font-mono">{url}</p>
+                ))}
+              </div>
+            </div>
+          )}
+          {showQrPrint && !baseUrl && (
+            <p className="mt-2 text-xs text-muted-foreground">Load this page in a browser to see QR codes.</p>
+          )}
         </div>
 
         {/* Completion Banner */}
