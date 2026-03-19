@@ -1,13 +1,29 @@
 import { useState } from 'react';
 import { Bell, ChevronLeft, CheckCircle2 } from 'lucide-react';
+import { upsertKeepincontactSignup } from '../../services/keepinContactService';
 
 export function EmailSignupScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const [email, setEmail]       = useState('');
   const [phone, setPhone]       = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const handleSubmit = () => {
-    if (email.trim()) setSubmitted(true);
+  const handleSubmit = async () => {
+    if (!email.trim()) return;
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      await upsertKeepincontactSignup({
+        email,
+        phone: phone.trim() ? phone : undefined,
+      });
+      setSubmitted(true);
+    } catch {
+      setSubmitError('Could not submit your info. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -97,13 +113,17 @@ export function EmailSignupScreen({ onNavigate }: { onNavigate: (screen: string)
               </div>
               <button
                 onClick={handleSubmit}
+                disabled={submitting}
+                aria-disabled={submitting}
+                type="button"
                 className="w-full carnival-gradient text-primary-foreground py-4 rounded-xl font-bold text-lg shadow-lg active:scale-[0.98] transition-transform"
               >
-                Sign Me Up
+                {submitting ? 'Submitting...' : 'Sign Me Up'}
               </button>
               <p className="text-xs text-muted-foreground text-center">
                 We'll never spam you. Unsubscribe anytime.
               </p>
+              {submitError && <p className="text-xs text-destructive text-center">{submitError}</p>}
             </div>
           </>
         ) : (

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, QrCode, CheckCircle2, Circle, Trophy, Printer, X, Camera } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { upsertScavengerCompletion } from '../../services/keepinContactService';
 
 const SCAVENGER_STORAGE_KEY = 'thurtene-scavenger-tasks';
 const RAFFLE_ENTRY_KEY = 'thurtene-scavenger-raffle-entry';
@@ -79,6 +80,8 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
   const [showEntryModal, setShowEntryModal] = useState(false);
   const [entryName, setEntryName] = useState('');
   const [entryPhone, setEntryPhone] = useState('');
+  const [raffleSubmitting, setRaffleSubmitting] = useState(false);
+  const [raffleSubmitError, setRaffleSubmitError] = useState<string | null>(null);
   const qrScannerRef = useRef<Html5Qrcode | null>(null);
 
   // Persist tasks whenever they change (per device only – localStorage)
@@ -176,16 +179,20 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
   const qrImageUrl = (url: string) =>
     `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
 
-  const handleRaffleEntrySubmit = () => {
+  const handleRaffleEntrySubmit = async () => {
     const name = entryName.trim();
     const phone = entryPhone.trim();
     if (!name || !phone) return;
+    setRaffleSubmitting(true);
+    setRaffleSubmitError(null);
     try {
       localStorage.setItem(RAFFLE_ENTRY_KEY, JSON.stringify({ name, phone }));
+      await upsertScavengerCompletion({ name, phone });
       setShowEntryModal(false);
     } catch {
-      // ignore
+      setRaffleSubmitError('Could not submit your raffle info. Please try again.');
     }
+    setRaffleSubmitting(false);
   };
 
   return (
@@ -461,14 +468,17 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
               placeholder="(555) 000-0000"
               className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground text-sm mb-4"
             />
+            {raffleSubmitError && (
+              <p className="text-xs text-destructive mb-3">{raffleSubmitError}</p>
+            )}
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={handleRaffleEntrySubmit}
-                disabled={!entryName.trim() || !entryPhone.trim()}
+                disabled={!entryName.trim() || !entryPhone.trim() || raffleSubmitting}
                 className="flex-1 bg-primary text-primary-foreground py-3 rounded-xl font-bold disabled:opacity-50"
               >
-                Submit
+                {raffleSubmitting ? 'Submitting...' : 'Submit'}
               </button>
               <button
                 type="button"
