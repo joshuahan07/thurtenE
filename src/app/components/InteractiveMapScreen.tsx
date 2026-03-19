@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import { X, ChevronLeft, List, MapPin, Star } from 'lucide-react';
 
 const MAP_IMAGE = '/image.png';
@@ -83,63 +83,12 @@ const sectionColors: Record<string, string> = {
   E: '#a79a03',
 };
 
-const MIN_SCALE = 0.5;
-const MAX_SCALE = 4;
-
 type ViewMode = 'list' | 'map';
 
 export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const [viewMode, setViewMode] = useState<ViewMode>('map');
   const [selectedBooth, setSelectedBooth] = useState<Booth | null>(null);
   const [positions] = useState<Record<number, { x: number; y: number }>>(loadSavedPositions);
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
-
-  const [scale, setScale] = useState(1);
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const panStartRef = useRef({ panX: 0, panY: 0, clientX: 0, clientY: 0 });
-  const [isPanning, setIsPanning] = useState(false);
-
-  const handleMapPointerDown = useCallback(
-    (e: React.PointerEvent) => {
-      if ((e.target as HTMLElement).closest('button')) return;
-      e.preventDefault();
-      (e.target as HTMLElement).setPointerCapture(e.pointerId);
-      panStartRef.current = { panX: pan.x, panY: pan.y, clientX: e.clientX, clientY: e.clientY };
-      setIsPanning(true);
-    },
-    [pan.x, pan.y]
-  );
-
-  const handleMapPointerMove = useCallback((e: React.PointerEvent) => {
-    if (!isPanning) return;
-    const { panX, panY, clientX, clientY } = panStartRef.current;
-    setPan({ x: panX + e.clientX - clientX, y: panY + e.clientY - clientY });
-  }, [isPanning]);
-
-  const handleMapPointerUp = useCallback((e: React.PointerEvent) => {
-    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
-    setIsPanning(false);
-  }, []);
-
-  const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
-      e.preventDefault();
-      if (!viewportRef.current || !innerRef.current) return;
-      const vp = viewportRef.current.getBoundingClientRect();
-      const vx = e.clientX - vp.left;
-      const vy = e.clientY - vp.top;
-      const contentX = (vx - pan.x) / scale;
-      const contentY = (vy - pan.y) / scale;
-      const factor = e.deltaY > 0 ? 0.9 : 1.1;
-      const newScale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale * factor));
-      const newPanX = vx - contentX * newScale;
-      const newPanY = vy - contentY * newScale;
-      setScale(newScale);
-      setPan({ x: newPanX, y: newPanY });
-    },
-    [pan.x, pan.y, scale]
-  );
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -248,62 +197,9 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
           <p className="text-xs text-center text-muted-foreground py-2 px-4">
             Tap a numbered badge to see booth details
           </p>
-          <p className="text-[10px] text-center text-muted-foreground/80 px-4 -mt-1">
-            Pinch or scroll to zoom · Drag map to pan
-          </p>
 
-          {/* Map viewport: zoom/pan stays inside this box */}
-          <div
-            ref={viewportRef}
-            className="relative mx-3 rounded-xl overflow-hidden border border-border shadow-xl select-none h-[55vh] min-h-[280px] max-h-[500px] touch-none"
-            onWheel={handleWheel}
-            style={{ touchAction: 'none' }}
-          >
-            <div
-              ref={innerRef}
-              className="relative w-full origin-top-left"
-              style={{
-                transform: `translate(${pan.x}px, ${pan.y}px) scale(${scale})`,
-              }}
-              onPointerDown={handleMapPointerDown}
-              onPointerMove={handleMapPointerMove}
-              onPointerUp={handleMapPointerUp}
-              onPointerCancel={handleMapPointerUp}
-            >
-              <img
-                src={MAP_IMAGE}
-                alt="ThurtenE Carnival Map"
-                className="w-full block pointer-events-none"
-              />
-              {/* Booth tap zones – positions from your saved layout when you had locked it */}
-              {booths.map((booth) => {
-                const pos = positions[booth.id] ?? { x: booth.x, y: booth.y };
-                return (
-                  <button
-                    key={booth.id}
-                    type="button"
-                    onClick={() => setSelectedBooth(booth)}
-                    className={`absolute flex items-center justify-center rounded-full text-[9px] font-bold shadow-lg transition-transform touch-none cursor-pointer hover:scale-110 active:scale-95 ${isPanning ? 'pointer-events-none' : ''}`}
-                    style={{
-                      top: `${pos.y}%`,
-                      left: `${pos.x}%`,
-                      transform: 'translate(-50%, -50%)',
-                      width: '18px',
-                      height: '18px',
-                      color: '#0f100d',
-                      backgroundColor: sectionColors[booth.section] ?? '#fbee08',
-                      border: '1.5px solid rgba(255,255,255,0.6)',
-                    }}
-                  >
-                    {booth.id}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-      {/* Map key: DR. G's Fun House Stage */}
-          <div className="mx-3 mt-3 mb-4 bg-card border border-border rounded-xl p-3">
+          {/* Map key: DR. G's Fun House Stage – on top */}
+          <div className="mx-3 mb-3 bg-card border border-border rounded-xl p-3">
             <div className="flex items-center gap-2 mb-3">
               <img
                 src="/dr-g-ship.png"
@@ -319,30 +215,80 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
             </div>
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 fill-black text-black shrink-0" />
+                <Star
+                  className="w-4 h-4 shrink-0"
+                  style={{ fill: 'var(--key-entrance)', color: 'var(--key-entrance)' }}
+                />
                 <span className="text-xs text-foreground">Entrance</span>
               </div>
               <div className="flex items-center gap-2">
-                <Star className="w-4 h-4 fill-red-500 text-red-500 shrink-0" />
+                <Star
+                  className="w-4 h-4 shrink-0"
+                  style={{ fill: 'var(--key-exit)', color: 'var(--key-exit)' }}
+                />
                 <span className="text-xs text-foreground">Exit</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-sm shrink-0 bg-[#c45ec4]" />
+                <span
+                  className="w-4 h-4 rounded-sm shrink-0"
+                  style={{ backgroundColor: 'var(--key-atm)' }}
+                />
                 <span className="text-xs text-foreground">ATM</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-sm shrink-0 bg-blue-500" />
+                <span
+                  className="w-4 h-4 rounded-sm shrink-0"
+                  style={{ backgroundColor: 'var(--key-water)' }}
+                />
                 <span className="text-xs text-foreground">Water Station</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-sm shrink-0 bg-green-600" />
+                <span
+                  className="w-4 h-4 rounded-sm shrink-0"
+                  style={{ backgroundColor: 'var(--key-waste)' }}
+                />
                 <span className="text-xs text-foreground">Waste Station</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-sm shrink-0 bg-amber-800" />
+                <span
+                  className="w-4 h-4 rounded-sm shrink-0"
+                  style={{ backgroundColor: 'var(--key-porta)' }}
+                />
                 <span className="text-xs text-foreground">Porta-Potties</span>
               </div>
             </div>
+          </div>
+
+          {/* Map – scrolls with page */}
+          <div className="relative mx-3 mb-6 rounded-xl overflow-hidden border border-border shadow-xl">
+            <img
+              src={MAP_IMAGE}
+              alt="ThurtenE Carnival Map"
+              className="w-full block"
+            />
+            {booths.map((booth) => {
+              const pos = positions[booth.id] ?? { x: booth.x, y: booth.y };
+              return (
+                <button
+                  key={booth.id}
+                  type="button"
+                  onClick={() => setSelectedBooth(booth)}
+                  className="absolute flex items-center justify-center rounded-full text-[9px] font-bold shadow-lg transition-transform cursor-pointer hover:scale-110 active:scale-95"
+                  style={{
+                    top: `${pos.y}%`,
+                    left: `${pos.x}%`,
+                    transform: 'translate(-50%, -50%)',
+                    width: '18px',
+                    height: '18px',
+                    color: '#0f100d',
+                    backgroundColor: sectionColors[booth.section] ?? '#fbee08',
+                    border: '1.5px solid rgba(255,255,255,0.6)',
+                  }}
+                >
+                  {booth.id}
+                </button>
+              );
+            })}
           </div>
         </>
       )}

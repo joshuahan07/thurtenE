@@ -15,11 +15,11 @@ interface Task {
 }
 
 const initialTasks: Task[] = [
-  { id: 1, name: 'Visit a booth in Section A (East Side)',       completed: false, code: 'SECTION-A', section: 'A' },
-  { id: 2, name: 'Visit a booth in Section B (Middle Row)',      completed: false, code: 'SECTION-B', section: 'B' },
-  { id: 3, name: 'Visit a booth in Section C (South Row)',       completed: false, code: 'SECTION-C', section: 'C' },
-  { id: 4, name: 'Visit a booth in Section D (West Side)',       completed: false, code: 'SECTION-D', section: 'D' },
-  { id: 5, name: 'Visit a booth in Section E (North Center)',    completed: false, code: 'SECTION-E', section: 'E' },
+  { id: 1, name: 'Visit a booth in Section A',       completed: false, code: 'SECTION-A', section: 'A' },
+  { id: 2, name: 'Visit a booth in Section B',       completed: false, code: 'SECTION-B', section: 'B' },
+  { id: 3, name: 'Visit a booth in Section C',       completed: false, code: 'SECTION-C', section: 'C' },
+  { id: 4, name: 'Visit a booth in Section D',       completed: false, code: 'SECTION-D', section: 'D' },
+  { id: 5, name: 'Visit a booth in Section E',       completed: false, code: 'SECTION-E', section: 'E' },
 ];
 
 const sectionColors: Record<string, string> = {
