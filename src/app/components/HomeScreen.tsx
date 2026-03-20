@@ -43,7 +43,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
           >
             ThurtenE Carnival
           </h1>
-          <p className="mt-2 text-[#0f100d] text-sm font-semibold uppercase tracking-widest">
+          <p className="mt-2 text-white text-sm font-bold uppercase tracking-widest drop-shadow">
             April 17 – 19, 2026
           </p>
           <a
