@@ -3,9 +3,9 @@ import { SCAVENGER_HUNT_ICON_URL } from '../publicAssets';
 import heroMark from '../../assets/thurtene-hero-mark.png';
 import homeHeroBackground from '../../assets/home-hero-background.png';
 
-/** Simple white CTAs with orange outline (shared home actions). */
+/** Yellow-to-orange gradient CTAs (shared home actions). */
 const HOME_ACTION_CLASS =
-  'w-full bg-white text-[#0f100d] py-5 px-6 text-lg font-bold rounded-xl flex items-center justify-center gap-3 border-2 border-[#ea580c] shadow-sm hover:bg-neutral-50 active:scale-[0.98] transition-colors';
+  'w-full bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] text-[#0f100d] py-5 px-6 text-lg font-bold rounded-xl flex items-center justify-center gap-3 shadow-sm hover:brightness-[1.03] active:scale-[0.98] transition-transform';
 
 export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   return (
@@ -62,7 +62,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
       <div className="flex-1 flex flex-col px-5 pt-2 pb-6">
 
         {/* Description card */}
-        <div className="rounded-xl border-2 border-[#ea580c]/70 bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] p-5 mb-5 shadow-lg">
+        <div className="rounded-xl border-2 border-[#d4183d] bg-[#f7f2e8] p-5 mb-5 shadow-lg">
           <p className="text-center text-[#0f100d] leading-relaxed font-medium">
             Three days of carnival games, live entertainment, incredible food, and prizes on the WashU campus.
           </p>
@@ -77,15 +77,15 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
           ].map((item) => (
             <div
               key={item.label}
-              className="border-2 border-[#fb923c] rounded-xl p-3 flex flex-col items-center shadow-sm bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316]"
+              className="bg-card border-2 border-[#fb923c] rounded-xl p-3 flex flex-col items-center shadow-sm"
             >
               <span
-                className="text-2xl font-bold text-[#0f100d]"
+                className="text-2xl font-bold text-accent"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {item.value}
               </span>
-              <span className="text-xs text-[#0f100d]/70 mt-0.5">{item.label}</span>
+              <span className="text-xs text-muted-foreground mt-0.5">{item.label}</span>
             </div>
           ))}
         </div>

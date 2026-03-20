@@ -145,6 +145,7 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
   const totalTasks = tasks.length;
   const progressPct = (completedCount / totalTasks) * 100;
   const allDone = completedCount === totalTasks;
+  const isZeroComplete = completedCount === 0;
 
   const baseUrl =
     typeof window !== 'undefined'
@@ -199,7 +200,11 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
           Complete the hunt to enter the raffle!
         </p>
         {/* Progress — card like reference */}
-        <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+        <div
+          className={`rounded-xl border-2 bg-card p-4 shadow-sm ${
+            isZeroComplete ? 'border-[#d4183d]' : 'border-border'
+          }`}
+        >
           <div className="flex items-center justify-between text-sm mb-2">
             <span className="font-medium text-foreground">
               {completedCount} of {totalTasks} completed
@@ -231,10 +236,8 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
           {tasks.map((task) => (
             <div
               key={task.id}
-              className={`rounded-xl border p-4 transition-colors ${
-                task.completed
-                  ? 'border-primary/55 bg-primary/25'
-                  : 'border-border bg-muted/50'
+              className={`rounded-xl border-2 border-[#fb923c] p-4 transition-colors ${
+                task.completed ? 'bg-primary/25' : 'bg-muted/50'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -280,7 +283,7 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
         </div>
 
         {/* Organizers: booth QR codes — collapsed */}
-        <details className="rounded-xl border border-border bg-card/50 text-xs">
+        <details className="rounded-xl border-2 border-[#fb923c] bg-card/50 text-xs">
           <summary className="cursor-pointer list-none px-3 py-3 font-medium text-muted-foreground flex items-center gap-2 [&::-webkit-details-marker]:hidden">
             <Printer className="w-3.5 h-3.5 shrink-0" />
             <span>Print QR codes for booths (organizers)</span>

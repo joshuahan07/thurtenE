@@ -209,7 +209,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
           </p>
 
           {/* Map key: DR. G's Fun House Stage – on top */}
-          <div className="mx-3 mb-3 bg-card border border-border rounded-xl p-3">
+          <div className="mx-3 mb-3 bg-card border-2 border-[#fb923c] rounded-xl p-3">
             <div className="flex items-center gap-2 mb-3">
               <img
                 src="/dr-g-ship.png"
@@ -270,7 +270,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
           </div>
 
           {/* Map – scrolls with page */}
-          <div className="relative mx-3 mb-6 rounded-xl overflow-hidden border border-border shadow-xl">
+          <div className="relative mx-3 mb-6 rounded-xl overflow-hidden border-2 border-[#fb923c] shadow-xl">
             <img
               src={MAP_IMAGE}
               alt="ThurtenE Carnival Map"

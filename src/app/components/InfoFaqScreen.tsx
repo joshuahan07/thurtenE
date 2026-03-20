@@ -65,7 +65,7 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
 
       <div className="p-4 pb-24 space-y-4">
         {/* Quick Info Card */}
-        <div className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-primary">
+        <div className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-[#ea580c]">
           <h2
             className="text-base font-bold text-foreground mb-3 pb-2 border-b border-border"
             style={{ fontFamily: "'Playfair Display', serif" }}
@@ -105,7 +105,7 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
         {faqSections.map((section) => {
           const SectionIcon = section.icon;
           return (
-            <div key={section.title} className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-primary">
+            <div key={section.title} className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-[#ea580c]">
               <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
                 <SectionIcon className="w-4 h-4 text-primary" />
                 <h2
@@ -142,7 +142,7 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
         })}
 
         {/* Contact CTA */}
-        <div className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-primary">
+        <div className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-[#ea580c]">
           <h3
             className="font-bold text-foreground mb-1 text-base"
             style={{ fontFamily: "'Playfair Display', serif" }}
