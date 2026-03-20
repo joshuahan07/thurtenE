@@ -208,7 +208,7 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
           </div>
           <div className="h-2.5 rounded-full bg-muted overflow-hidden">
             <div
-              className="h-full rounded-full bg-emerald-400 transition-all duration-500 ease-out"
+              className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
               style={{ width: `${progressPct}%` }}
             />
           </div>
@@ -220,7 +220,7 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
           onClick={() => setShowScanner(true)}
           className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-border bg-card text-foreground font-semibold text-sm shadow-sm active:scale-[0.99] transition-transform"
         >
-          <Camera className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+          <Camera className="w-5 h-5 text-primary" />
           Scan QR code at booth
         </button>
 
@@ -231,8 +231,8 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
               key={task.id}
               className={`rounded-xl border p-4 transition-colors ${
                 task.completed
-                  ? 'border-emerald-200/80 bg-emerald-100/90 dark:border-emerald-500/30 dark:bg-emerald-500/15'
-                  : 'border-border bg-muted/50 dark:bg-muted/30'
+                  ? 'border-primary/55 bg-primary/25'
+                  : 'border-border bg-muted/50'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -256,7 +256,7 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
                 <div className="shrink-0 pt-0.5">
                   {task.completed ? (
                     <div
-                      className="flex size-9 items-center justify-center rounded-full bg-foreground/10"
+                      className="flex size-9 items-center justify-center rounded-full bg-primary/40"
                       aria-hidden
                     >
                       <Check className="w-6 h-6 text-foreground stroke-[2.5]" />
@@ -318,11 +318,11 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
         </details>
 
         {allDone && (
-          <div className="rounded-xl border border-emerald-300/60 bg-emerald-50 dark:bg-emerald-500/10 dark:border-emerald-500/40 p-5 text-center">
+          <div className="rounded-xl border-2 border-primary/60 bg-primary/20 p-5 text-center">
             <p className="text-lg font-bold text-foreground mb-2">You did it!</p>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
               {getSavedRaffleEntry()
-                ? "You're entered in our raffle—we'll notify you if you win."
+                ? "You're entered in our raffle. We'll notify you if you win."
                 : 'Enter your details in the popup to join the gift card raffle.'}
             </p>
             <button

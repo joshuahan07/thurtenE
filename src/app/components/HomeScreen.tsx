@@ -62,8 +62,8 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
       <div className="flex-1 flex flex-col px-5 pt-2 pb-6">
 
         {/* Description card */}
-        <div className="bg-card border-2 border-[#ffa040] rounded-xl p-5 mb-5 shadow-lg">
-          <p className="text-center text-foreground leading-relaxed">
+        <div className="rounded-xl border-2 border-[#ea580c]/70 bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] p-5 mb-5 shadow-lg">
+          <p className="text-center text-[#0f100d] leading-relaxed font-medium">
             Three days of carnival games, live entertainment, incredible food, and prizes on the WashU campus.
           </p>
         </div>

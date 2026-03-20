@@ -60,7 +60,7 @@ export function EmailSignupScreen({ onNavigate }: { onNavigate: (screen: string)
                 className="text-2xl font-bold text-foreground"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
-                Get Carnival Updates
+                Get Updates
               </h2>
               <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
                 Sign up for exclusive updates, prize announcements, and future carnival news.
@@ -94,7 +94,6 @@ export function EmailSignupScreen({ onNavigate }: { onNavigate: (screen: string)
             >
               <Instagram className="w-5 h-5 shrink-0 text-accent" aria-hidden />
               <span>Follow us on Instagram</span>
-              <span className="text-muted-foreground font-normal">@thurtene</span>
             </a>
 
             {/* Form */}
@@ -161,7 +160,7 @@ export function EmailSignupScreen({ onNavigate }: { onNavigate: (screen: string)
               className="inline-flex items-center gap-2 text-sm font-semibold text-accent underline underline-offset-2 hover:opacity-90 mb-8"
             >
               <Instagram className="w-4 h-4 shrink-0" aria-hidden />
-              Follow @thurtene on Instagram
+              Follow us on Instagram
             </a>
             <button
               onClick={() => onNavigate('home')}
