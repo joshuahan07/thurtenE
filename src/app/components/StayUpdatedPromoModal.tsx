@@ -36,7 +36,7 @@ export function StayUpdatedPromoModal({ open, onDismiss, onGoToSignup }: Props) 
             <X className="w-5 h-5" />
           </button>
 
-          <div className="text-center mb-6 pr-8">
+          <div className="text-center mb-6">
             <div className="carnival-gradient w-16 h-16 mx-auto rounded-2xl flex items-center justify-center shadow-lg mb-4">
               <Bell className="w-8 h-8 text-primary-foreground" />
             </div>

@@ -1,7 +1,7 @@
 import { Map, Bell, ExternalLink } from 'lucide-react';
 import { SCAVENGER_HUNT_ICON_URL } from '../publicAssets';
 import heroMark from '../../assets/thurtene-hero-mark.png';
-import carnivalBg from '../../assets/carnival-hero.jpg';
+import homeHeroBackground from '../../assets/home-hero-background.png';
 
 /** Simple white CTAs with orange outline (shared home actions). */
 const HOME_ACTION_CLASS =
@@ -14,7 +14,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
       <div className="relative overflow-hidden" style={{ minHeight: '300px' }}>
         {/* Background image */}
         <img
-          src={carnivalBg}
+          src={homeHeroBackground}
           alt="ThurtenE Carnival"
           className="absolute inset-0 w-full h-full object-cover"
         />
