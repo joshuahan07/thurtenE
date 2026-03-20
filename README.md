@@ -20,12 +20,16 @@ pnpm dev
 
 ## Assets
 All images live in `src/assets/`:
-- `thurtene-logo.jpeg` — Thurtene logo (circular, shown in hero)
+- `thurtene-hero-mark.png` — Hero mark (shown inside a full circular primary ring)
+- `thurtene-logo.jpeg` — legacy logo asset (unused unless swapped back in code)
 - `carnival-hero.jpg` — Hero background photo
 - `thurtene-site-map.jpeg` — Interactive map image
 
-## Color Palette
-The app uses a **Carnival Night** warm dark palette:
+## Themes
+Two palettes in the theme picker: **Day** (default, cream + black/yellow + orange accent) and **Night** (black & yellow). Theme choice is stored in `localStorage` under `thurtene-theme`.
+
+## Color Palette (legacy notes)
+The original design referenced a warm dark palette:
 | Token | Value | Use |
 |---|---|---|
 | Background | `#180C04` | Page backgrounds |

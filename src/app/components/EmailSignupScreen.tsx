@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Bell, ChevronLeft, CheckCircle2 } from 'lucide-react';
+import { Bell, ChevronLeft, CheckCircle2, Instagram } from 'lucide-react';
 import { upsertKeepincontactSignup } from '../../services/keepinContactService';
+
+const THURTENE_INSTAGRAM_URL = 'https://www.instagram.com/thurtene/';
 
 export function EmailSignupScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const [email, setEmail]       = useState('');
@@ -84,6 +86,17 @@ export function EmailSignupScreen({ onNavigate }: { onNavigate: (screen: string)
               ))}
             </div>
 
+            <a
+              href={THURTENE_INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-xl border-2 border-border bg-card text-foreground font-semibold text-sm shadow-sm hover:bg-muted active:scale-[0.99] transition-all mb-6"
+            >
+              <Instagram className="w-5 h-5 shrink-0 text-accent" aria-hidden />
+              <span>Follow us on Instagram</span>
+              <span className="text-muted-foreground font-normal">@thurtene</span>
+            </a>
+
             {/* Form */}
             <div className="mt-auto space-y-4">
               <div>
@@ -120,9 +133,6 @@ export function EmailSignupScreen({ onNavigate }: { onNavigate: (screen: string)
               >
                 {submitting ? 'Submitting...' : 'Sign Me Up'}
               </button>
-              <p className="text-xs text-muted-foreground text-center">
-                We'll never spam you. Unsubscribe anytime.
-              </p>
               {submitError && <p className="text-xs text-destructive text-center">{submitError}</p>}
             </div>
           </>
@@ -138,12 +148,21 @@ export function EmailSignupScreen({ onNavigate }: { onNavigate: (screen: string)
             >
               You're In!
             </h2>
-            <p className="text-muted-foreground text-sm mb-8 max-w-xs leading-relaxed">
+            <p className="text-muted-foreground text-sm mb-6 max-w-xs leading-relaxed">
               We'll send carnival updates to <strong className="text-foreground">{email}</strong>
               {phone && (
                 <> and texts to <strong className="text-foreground">{phone}</strong></>
               )}.
             </p>
+            <a
+              href={THURTENE_INSTAGRAM_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-accent underline underline-offset-2 hover:opacity-90 mb-8"
+            >
+              <Instagram className="w-4 h-4 shrink-0" aria-hidden />
+              Follow @thurtene on Instagram
+            </a>
             <button
               onClick={() => onNavigate('home')}
               className="carnival-gradient text-primary-foreground py-3 px-8 rounded-xl font-bold shadow-lg"

@@ -1,6 +1,11 @@
-import { MapPin, Search, Bell, ExternalLink } from 'lucide-react';
-import logo from '../../assets/thurtene-logo.jpeg';
+import { Map, Bell, ExternalLink } from 'lucide-react';
+import { SCAVENGER_HUNT_ICON_URL } from '../publicAssets';
+import heroMark from '../../assets/thurtene-hero-mark.png';
 import carnivalBg from '../../assets/carnival-hero.jpg';
+
+/** Simple white CTAs with orange outline (shared home actions). */
+const HOME_ACTION_CLASS =
+  'w-full bg-white text-[#0f100d] py-5 px-6 text-lg font-bold rounded-xl flex items-center justify-center gap-3 border-2 border-[#ea580c] shadow-sm hover:bg-neutral-50 active:scale-[0.98] transition-colors';
 
 export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   return (
@@ -22,27 +27,32 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center px-6 pt-10 pb-8">
-          <img
-            src={logo}
-            alt="ThurtenE Carnival Logo"
-            className="w-28 h-28 object-contain rounded-full shadow-2xl border-2 border-accent mb-4"
-          />
+          {/* Full circular yellow ring completes the mark; artwork sits on white inside the circle */}
+          <div className="mb-4 inline-flex rounded-full p-[3px] bg-primary shadow-2xl ring-2 ring-white/35">
+            <div className="rounded-full bg-white p-0.5 sm:p-1 overflow-hidden">
+              <img
+                src={heroMark}
+                alt="ThurtenE Carnival"
+                className="w-28 h-28 sm:w-36 sm:h-36 object-contain block mx-auto scale-[1.34] origin-center"
+              />
+            </div>
+          </div>
           <h1
             className="text-4xl font-extrabold text-center text-white tracking-tight drop-shadow-lg"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             ThurtenE Carnival
           </h1>
-          <p className="mt-2 text-accent text-sm font-semibold uppercase tracking-widest drop-shadow">
+          <p className="mt-2 text-[#0f100d] text-sm font-semibold uppercase tracking-widest">
             April 17 – 19, 2026
           </p>
           <a
             href="https://www.thurtene.org/"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/20 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-white/20 transition-colors"
+            className="mt-4 inline-flex items-center gap-1.5 bg-[#ea580c] text-white px-4 py-2 rounded-full text-sm font-medium shadow-md hover:bg-[#c2410c] transition-colors"
           >
-            <ExternalLink className="w-3.5 h-3.5" />
+            <ExternalLink className="w-3.5 h-3.5 shrink-0" />
             Official Website
           </a>
         </div>
@@ -52,9 +62,9 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
       <div className="flex-1 flex flex-col px-5 pt-2 pb-6">
 
         {/* Description card */}
-        <div className="bg-card border border-border rounded-xl p-5 mb-5 shadow-lg">
+        <div className="bg-card border-2 border-[#ffa040] rounded-xl p-5 mb-5 shadow-lg">
           <p className="text-center text-foreground leading-relaxed">
-            Three days of carnival games, live entertainment, incredible food, and prizes — right on the Wash U campus. Your pocket guide to everything ThurtenE.
+            Three days of carnival games, live entertainment, incredible food, and prizes on the WashU campus.
           </p>
         </div>
 
@@ -67,7 +77,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
           ].map((item) => (
             <div
               key={item.label}
-              className="bg-card border border-border rounded-xl p-3 flex flex-col items-center shadow"
+              className="bg-card border-2 border-[#fb923c] rounded-xl p-3 flex flex-col items-center shadow-sm"
             >
               <span
                 className="text-2xl font-bold text-accent"
@@ -82,27 +92,31 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
 
         {/* Primary Actions */}
         <div className="space-y-3 mt-auto">
-          <button
-            onClick={() => onNavigate('map')}
-            className="w-full carnival-gradient text-white py-5 px-6 text-lg font-bold rounded-xl flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-transform"
-          >
-            <MapPin className="w-6 h-6" />
+          <button type="button" onClick={() => onNavigate('map')} className={HOME_ACTION_CLASS}>
+            <Map className="w-6 h-6 shrink-0" strokeWidth={2} />
             View Interactive Map
           </button>
 
-          <button
-            onClick={() => onNavigate('scavenger')}
-            className="w-full bg-card text-foreground py-5 px-6 text-lg font-bold rounded-xl border-2 border-primary flex items-center justify-center gap-3 shadow hover:bg-muted active:scale-[0.98] transition-all"
-          >
-            <Search className="w-6 h-6 text-primary" />
+          <button type="button" onClick={() => onNavigate('scavenger')} className={HOME_ACTION_CLASS}>
+            <span
+              className="w-7 h-7 shrink-0 inline-block bg-current text-[#0f100d]"
+              aria-hidden
+              style={{
+                maskImage: `url(${SCAVENGER_HUNT_ICON_URL})`,
+                maskSize: 'contain',
+                maskRepeat: 'no-repeat',
+                maskPosition: 'center',
+                WebkitMaskImage: `url(${SCAVENGER_HUNT_ICON_URL})`,
+                WebkitMaskSize: 'contain',
+                WebkitMaskRepeat: 'no-repeat',
+                WebkitMaskPosition: 'center',
+              }}
+            />
             Join Scavenger Hunt
           </button>
 
-          <button
-            onClick={() => onNavigate('signup')}
-            className="w-full bg-card text-foreground py-5 px-6 text-lg font-bold rounded-xl border border-border flex items-center justify-center gap-3 shadow hover:bg-muted active:scale-[0.98] transition-all"
-          >
-            <Bell className="w-6 h-6 text-muted-foreground" />
+          <button type="button" onClick={() => onNavigate('signup')} className={HOME_ACTION_CLASS}>
+            <Bell className="w-6 h-6 shrink-0" strokeWidth={2} />
             Stay Updated
           </button>
         </div>

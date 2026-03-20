@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, QrCode, CheckCircle2, Circle, Trophy, Printer, X, Camera } from 'lucide-react';
+import { ChevronLeft, Check, MapPin, Printer, X, Camera, ScanLine } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { upsertScavengerCompletion } from '../../services/keepinContactService';
 
@@ -16,20 +16,12 @@ interface Task {
 }
 
 const initialTasks: Task[] = [
-  { id: 1, name: 'Visit a booth in Section A',       completed: false, code: 'SECTION-A', section: 'A' },
-  { id: 2, name: 'Visit a booth in Section B',       completed: false, code: 'SECTION-B', section: 'B' },
-  { id: 3, name: 'Visit a booth in Section C',       completed: false, code: 'SECTION-C', section: 'C' },
-  { id: 4, name: 'Visit a booth in Section D',       completed: false, code: 'SECTION-D', section: 'D' },
-  { id: 5, name: 'Visit a booth in Section E',       completed: false, code: 'SECTION-E', section: 'E' },
+  { id: 1, name: 'Visit a booth in Section A', completed: false, code: 'SECTION-A', section: 'A' },
+  { id: 2, name: 'Visit a booth in Section B', completed: false, code: 'SECTION-B', section: 'B' },
+  { id: 3, name: 'Visit a booth in Section C', completed: false, code: 'SECTION-C', section: 'C' },
+  { id: 4, name: 'Visit a booth in Section D', completed: false, code: 'SECTION-D', section: 'D' },
+  { id: 5, name: 'Visit a booth in Section E', completed: false, code: 'SECTION-E', section: 'E' },
 ];
-
-const sectionColors: Record<string, string> = {
-  A: '#fbee08',
-  B: '#e6d906',
-  C: '#d1c405',
-  D: '#bcaf04',
-  E: '#a79a03',
-};
 
 function loadSavedTasks(): Task[] {
   try {
@@ -49,7 +41,7 @@ function loadSavedTasks(): Task[] {
   return initialTasks;
 }
 
-/** Progress is stored in localStorage: per device/browser only. Other phones do not see your checkmarks. */
+/** Progress is stored in localStorage: per device/browser only. */
 function getSavedRaffleEntry(): { name: string; phone: string } | null {
   try {
     const raw = localStorage.getItem(RAFFLE_ENTRY_KEY);
@@ -63,17 +55,17 @@ function getSavedRaffleEntry(): { name: string; phone: string } | null {
   return null;
 }
 
-/** Parse section letter from scanned QR (URL or hash like #scavenger-section-A). */
+/** Parse section letter from scanned QR (URL/hash) or raw code like SECTION-A. */
 function parseSectionFromScannedText(text: string): string | null {
-  const match = text.match(/scavenger-section-([A-E])/i);
-  return match ? match[1].toUpperCase() : null;
+  const hashMatch = text.match(/scavenger-section-([A-E])/i);
+  if (hashMatch) return hashMatch[1].toUpperCase();
+  const codeMatch = text.match(/section[-_]?([A-E])/i);
+  if (codeMatch) return codeMatch[1].toUpperCase();
+  return null;
 }
 
 export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const [tasks, setTasks] = useState<Task[]>(loadSavedTasks);
-  const [codeInput, setCodeInput] = useState('');
-  const [showCodeEntry, setShowCodeEntry] = useState(false);
-  const [codeError, setCodeError] = useState('');
   const [showQrPrint, setShowQrPrint] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [scannerError, setScannerError] = useState<string | null>(null);
@@ -84,12 +76,10 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
   const [raffleSubmitError, setRaffleSubmitError] = useState<string | null>(null);
   const qrScannerRef = useRef<Html5Qrcode | null>(null);
 
-  // Persist tasks whenever they change (per device only – localStorage)
   useEffect(() => {
     localStorage.setItem(SCAVENGER_STORAGE_KEY, JSON.stringify(tasks));
   }, [tasks]);
 
-  // On mount: if URL hash is #scavenger-section-X, mark that section complete (opened from QR)
   useEffect(() => {
     const hash = window.location.hash;
     const match = hash.match(/^#scavenger-section-([A-E])$/i);
@@ -101,13 +91,11 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
     window.location.hash = '#scavenger';
   }, []);
 
-  // When all sections done, show raffle entry modal once if not already submitted
   useEffect(() => {
     const allDone = tasks.every((t) => t.completed);
     if (allDone && !getSavedRaffleEntry()) setShowEntryModal(true);
   }, [tasks]);
 
-  // Camera scanner: start when showScanner true, cleanup when false
   useEffect(() => {
     if (!showScanner) return;
     setScannerError(null);
@@ -121,16 +109,19 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
           (decodedText) => {
             const section = parseSectionFromScannedText(decodedText);
             if (!section) return;
-            scanner.stop().then(() => {
-              qrScannerRef.current = null;
-              setTasks((prev) =>
-                prev.map((t) => (t.section === section ? { ...t, completed: true } : t))
-              );
-              setShowScanner(false);
-            }).catch(() => {
-              qrScannerRef.current = null;
-              setShowScanner(false);
-            });
+            scanner
+              .stop()
+              .then(() => {
+                qrScannerRef.current = null;
+                setTasks((prev) =>
+                  prev.map((t) => (t.section === section ? { ...t, completed: true } : t))
+                );
+                setShowScanner(false);
+              })
+              .catch(() => {
+                qrScannerRef.current = null;
+                setShowScanner(false);
+              });
           },
           () => {}
         );
@@ -155,23 +146,10 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
   const progressPct = (completedCount / totalTasks) * 100;
   const allDone = completedCount === totalTasks;
 
-  const handleSubmitCode = () => {
-    const match = tasks.find(
-      (t) => t.code.toLowerCase() === codeInput.trim().toLowerCase() && !t.completed
-    );
-    if (match) {
-      setTasks(tasks.map((t) => (t.id === match.id ? { ...t, completed: true } : t)));
-      setCodeInput('');
-      setShowCodeEntry(false);
-      setCodeError('');
-    } else {
-      setCodeError('Code not recognised or already used. Try again!');
-    }
-  };
-
   const baseUrl =
     typeof window !== 'undefined'
-      ? `${window.location.origin}${window.location.pathname || ''}`.replace(/\/$/, '') || window.location.origin
+      ? `${window.location.origin}${window.location.pathname || ''}`.replace(/\/$/, '') ||
+        window.location.origin
       : '';
   const sectionQrUrls = (['A', 'B', 'C', 'D', 'E'] as const).map(
     (s) => `${baseUrl}#scavenger-section-${s}`
@@ -197,222 +175,167 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <div className="bg-card border-b-2 border-primary p-4 flex items-center justify-between shadow-lg">
-        <button
-          onClick={() => onNavigate('home')}
-          className="text-foreground p-1 rounded-lg flex items-center gap-1 hover:text-accent transition-colors"
-        >
-          <ChevronLeft className="w-5 h-5" />
-          <span className="text-sm font-semibold">Back</span>
-        </button>
-        <h1
-          className="text-lg font-bold text-foreground"
-          style={{ fontFamily: "'Playfair Display', serif" }}
-        >
-          Scavenger Hunt
-        </h1>
-        <div className="w-16" />
-      </div>
-
-      <div className="flex-1 p-4 pb-24 overflow-y-auto space-y-4">
-
-        {/* Prize Banner */}
-        <div className="bg-card border border-primary rounded-xl p-4 flex items-start gap-3">
-          <Trophy className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-          <p className="text-sm text-foreground leading-relaxed">
-            Complete all five sections and you'll be entered into a <strong className="text-accent">raffle to win a gift card!</strong> Scan the QR code at each booth to unlock it.
-          </p>
+      {/* Header — minimal */}
+      <header className="px-4 pt-4 pb-2 border-b border-border/60 bg-background">
+        <div className="flex items-center justify-between mb-2">
+          <button
+            type="button"
+            onClick={() => onNavigate('home')}
+            className="text-foreground p-1 -ml-1 rounded-lg flex items-center gap-0.5 hover:opacity-70 transition-opacity"
+            aria-label="Back to home"
+          >
+            <ChevronLeft className="w-5 h-5" />
+            <span className="text-sm font-medium">Back</span>
+          </button>
+          <span className="w-14" aria-hidden />
         </div>
+        <div className="text-center pb-2">
+          <h1 className="text-xl font-bold text-foreground tracking-tight">Scavenger Hunt</h1>
+          <p className="text-sm text-muted-foreground mt-1">Complete the hunt to enter the raffle!</p>
+        </div>
+      </header>
 
-        {/* Progress */}
-        <div className="bg-card border border-border rounded-xl p-4 shadow">
-          <div className="flex items-baseline gap-2 mb-3">
-            <span
-              className="text-4xl font-extrabold text-accent"
-              style={{ fontFamily: "'Playfair Display', serif" }}
-            >
-              {completedCount}
+      <div className="flex-1 px-4 py-4 pb-28 space-y-4 overflow-y-auto">
+        {/* Progress — card like reference */}
+        <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
+          <div className="flex items-center justify-between text-sm mb-2">
+            <span className="font-medium text-foreground">
+              {completedCount} of {totalTasks} completed
             </span>
-            <span className="text-xl text-muted-foreground">/ {totalTasks}</span>
-            <span className="text-sm text-muted-foreground ml-1">sections visited</span>
+            <span className="font-semibold text-foreground tabular-nums">
+              {Math.round(progressPct)}%
+            </span>
           </div>
-          <div className="h-3 bg-muted rounded-full overflow-hidden border border-border">
+          <div className="h-2.5 rounded-full bg-muted overflow-hidden">
             <div
-              className="h-full rounded-full carnival-gradient transition-all duration-500"
+              className="h-full rounded-full bg-emerald-400 transition-all duration-500 ease-out"
               style={{ width: `${progressPct}%` }}
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-1 text-right">
-            {Math.round(progressPct)}% complete
-          </p>
         </div>
 
-        {/* QR / Code Entry */}
-        <div className="bg-card border border-border rounded-xl p-4 shadow">
-          <div className="flex items-center gap-2 mb-3">
-            <QrCode className="w-4 h-4 text-primary" />
-            <span className="text-xs text-accent uppercase tracking-widest font-semibold">
-              Mark a Section Complete
-            </span>
-          </div>
-          {!showCodeEntry ? (
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => setShowScanner(true)}
-                className="w-full carnival-gradient text-primary-foreground py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow active:scale-[0.98] transition-transform"
-              >
-                <Camera className="w-5 h-5" />
-                Scan QR Code at Booth
-              </button>
-              <button
-                onClick={() => { setShowCodeEntry(true); setCodeError(''); }}
-                className="w-full bg-muted text-foreground py-3 rounded-xl border border-border font-semibold hover:bg-secondary transition-colors"
-              >
-                Enter Code Manually
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              <label className="block text-xs text-muted-foreground mb-1 font-semibold uppercase tracking-wide">
-                Booth Code
-              </label>
-              <input
-                type="text"
-                value={codeInput}
-                onChange={(e) => { setCodeInput(e.target.value); setCodeError(''); }}
-                placeholder="e.g. SECTION-A"
-                className="w-full bg-muted border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary text-sm"
-              />
-              {codeError && (
-                <p className="text-xs text-destructive">{codeError}</p>
-              )}
-              <div className="flex gap-2">
-                <button
-                  onClick={handleSubmitCode}
-                  className="flex-1 carnival-gradient text-primary-foreground py-2.5 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform"
-                >
-                  Submit
-                </button>
-                <button
-                  onClick={() => { setShowCodeEntry(false); setCodeInput(''); setCodeError(''); }}
-                  className="px-4 bg-muted border border-border rounded-xl text-muted-foreground hover:text-foreground font-semibold transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* Single scan CTA — simple */}
+        <button
+          type="button"
+          onClick={() => setShowScanner(true)}
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-border bg-card text-foreground font-semibold text-sm shadow-sm active:scale-[0.99] transition-transform"
+        >
+          <Camera className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+          Scan QR code at booth
+        </button>
 
-        {/* Task Checklist */}
-        <div className="bg-card border border-border rounded-xl p-4 shadow">
-          <p className="text-xs text-accent uppercase tracking-widest font-semibold mb-3">
-            Sections Checklist
-          </p>
-          <div className="space-y-2">
-            {tasks.map((task) => (
-              <div
-                key={task.id}
-                className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-                  task.completed
-                    ? 'border-primary/40 bg-muted'
-                    : 'border-border bg-card'
-                }`}
-              >
-                <span
-                  className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-background shrink-0"
-                  style={{ backgroundColor: sectionColors[task.section] ?? '#fbee08' }}
-                >
-                  {task.section}
-                </span>
-                {task.completed ? (
-                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />
-                ) : (
-                  <Circle className="w-5 h-5 text-border shrink-0" />
-                )}
-                <span
-                  className={`text-sm flex-1 ${
-                    task.completed
-                      ? 'line-through text-muted-foreground'
-                      : 'text-foreground'
-                  }`}
-                >
-                  {task.name}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Print QR codes for booths */}
-        <div className="bg-card border border-border rounded-xl p-4 shadow">
-          <button
-            type="button"
-            onClick={() => setShowQrPrint(!showQrPrint)}
-            className="w-full flex items-center justify-center gap-2 text-foreground font-semibold text-sm"
-          >
-            <Printer className="w-4 h-4 text-primary" />
-            {showQrPrint ? 'Hide QR codes' : 'Get QR codes to print for each section'}
-          </button>
-          {showQrPrint && baseUrl && (
-            <div className="mt-4 space-y-4 print:block">
-              <p className="text-xs text-muted-foreground">
-                Print this page or screenshot. Place each QR code in Section A, B, C, D, and E. When visitors scan a code, the app opens and checks off that section.
-              </p>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
-                {(['A', 'B', 'C', 'D', 'E'] as const).map((section, i) => (
-                  <div key={section} className="flex flex-col items-center gap-2">
-                    <div className="bg-white p-2 rounded-lg">
-                      <img
-                        src={qrImageUrl(sectionQrUrls[i])}
-                        alt={`Section ${section} QR code`}
-                        width={120}
-                        height={120}
-                        className="w-[120px] h-[120px]"
-                      />
-                    </div>
-                    <span className="text-xs font-bold text-accent">Section {section}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-3 pt-3 border-t border-border space-y-1">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wider">URLs (for manual entry or custom QR tools)</p>
-                {sectionQrUrls.map((url, i) => (
-                  <p key={i} className="text-[10px] text-foreground break-all font-mono">{url}</p>
-                ))}
-              </div>
-            </div>
-          )}
-          {showQrPrint && !baseUrl && (
-            <p className="mt-2 text-xs text-muted-foreground">Load this page in a browser to see QR codes.</p>
-          )}
-        </div>
-
-        {/* Completion Banner */}
-        {allDone && (
-          <div className="carnival-gradient rounded-xl p-5 text-center shadow-2xl">
+        {/* Task list */}
+        <div className="space-y-3">
+          {tasks.map((task) => (
             <div
-              className="text-4xl font-extrabold text-white mb-2"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              key={task.id}
+              className={`rounded-xl border p-4 transition-colors ${
+                task.completed
+                  ? 'border-emerald-200/80 bg-emerald-100/90 dark:border-emerald-500/30 dark:bg-emerald-500/15'
+                  : 'border-border bg-muted/50 dark:bg-muted/30'
+              }`}
             >
-              🎉 You Did It!
+              <div className="flex items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <p
+                    className={`text-sm font-semibold leading-snug ${
+                      task.completed ? 'text-foreground' : 'text-foreground'
+                    }`}
+                  >
+                    {task.name}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('map')}
+                    className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-foreground/80 hover:text-foreground underline-offset-2 hover:underline"
+                  >
+                    <MapPin className="w-3.5 h-3.5 shrink-0" />
+                    View on map
+                  </button>
+                </div>
+                <div className="shrink-0 pt-0.5">
+                  {task.completed ? (
+                    <div
+                      className="flex size-9 items-center justify-center rounded-full bg-foreground/10"
+                      aria-hidden
+                    >
+                      <Check className="w-6 h-6 text-foreground stroke-[2.5]" />
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setShowScanner(true)}
+                      className="flex size-9 items-center justify-center rounded-full bg-foreground/8 hover:bg-foreground/15 transition-colors"
+                      aria-label={`Scan to complete: ${task.name}`}
+                    >
+                      <ScanLine className="w-6 h-6 text-foreground stroke-[2]" />
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-            <p className="text-white/90 text-sm mb-4 leading-relaxed">
-              You've visited all five sections. {getSavedRaffleEntry() ? "You're entered in our raffle—we'll notify you if you win!" : 'Enter your details below to be entered for the gift card raffle.'}
+          ))}
+        </div>
+
+        {/* Organizers: booth QR codes — collapsed */}
+        <details className="rounded-xl border border-border bg-card/50 text-xs">
+          <summary className="cursor-pointer list-none px-3 py-3 font-medium text-muted-foreground flex items-center gap-2 [&::-webkit-details-marker]:hidden">
+            <Printer className="w-3.5 h-3.5 shrink-0" />
+            <span>Print QR codes for booths (organizers)</span>
+          </summary>
+          <div className="px-3 pb-3 pt-0 space-y-3 border-t border-border/60">
+            <button
+              type="button"
+              onClick={() => setShowQrPrint((v) => !v)}
+              className="mt-2 text-foreground font-semibold underline-offset-2 hover:underline"
+            >
+              {showQrPrint ? 'Hide codes' : 'Show codes'}
+            </button>
+            {showQrPrint && baseUrl && (
+              <div className="space-y-3">
+                <p className="text-muted-foreground leading-relaxed">
+                  Place each code in Sections A–E. Scanning opens the app and checks off that section.
+                </p>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                  {(['A', 'B', 'C', 'D', 'E'] as const).map((section, i) => (
+                    <div key={section} className="flex flex-col items-center gap-1.5">
+                      <div className="bg-white p-2 rounded-lg">
+                        <img
+                          src={qrImageUrl(sectionQrUrls[i])}
+                          alt={`Section ${section} QR`}
+                          width={104}
+                          height={104}
+                          className="w-[104px] h-[104px]"
+                        />
+                      </div>
+                      <span className="text-[11px] font-bold text-foreground">Section {section}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </details>
+
+        {allDone && (
+          <div className="rounded-xl border border-emerald-300/60 bg-emerald-50 dark:bg-emerald-500/10 dark:border-emerald-500/40 p-5 text-center">
+            <p className="text-lg font-bold text-foreground mb-2">You did it!</p>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+              {getSavedRaffleEntry()
+                ? "You're entered in our raffle—we'll notify you if you win."
+                : 'Enter your details in the popup to join the gift card raffle.'}
             </p>
             <button
+              type="button"
               onClick={() => onNavigate('info')}
-              className="bg-foreground text-background py-2.5 px-6 rounded-xl font-bold shadow hover:opacity-90 transition-colors"
+              className="text-sm font-semibold text-foreground underline underline-offset-2 hover:no-underline"
             >
-              Learn More →
+              Learn more
             </button>
           </div>
         )}
       </div>
 
-      {/* Camera QR scanner modal */}
       {showScanner && (
         <div className="fixed inset-0 z-50 flex flex-col bg-background">
           <div className="flex items-center justify-between p-4 border-b border-border bg-card">
@@ -421,6 +344,7 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
               type="button"
               onClick={() => setShowScanner(false)}
               className="p-2 rounded-full bg-muted text-foreground hover:bg-secondary"
+              aria-label="Close scanner"
             >
               <X className="w-5 h-5" />
             </button>
@@ -429,28 +353,27 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
             <div className="px-4 py-3 bg-destructive/10 text-destructive text-sm">
               {scannerError}
               <br />
-              <span className="text-muted-foreground">Use &quot;Enter Code Manually&quot; or open the QR link on this phone instead.</span>
+              <span className="text-muted-foreground">
+                Open the QR link on this phone, or ask a volunteer for help.
+              </span>
             </div>
           )}
           <div className="flex-1 flex items-center justify-center p-4 min-h-0">
             <div id={SCANNER_ELEMENT_ID} className="w-full max-w-[280px] rounded-xl overflow-hidden" />
           </div>
           <p className="text-center text-xs text-muted-foreground pb-6 px-4">
-            Point your camera at the section QR code at the booth
+            Point your camera at the section QR code
           </p>
         </div>
       )}
 
-      {/* Raffle entry modal – when they finish all 5 sections */}
       {showEntryModal && (
         <>
-          <div className="fixed inset-0 bg-black/60 z-40" onClick={() => setShowEntryModal(false)} />
-          <div className="fixed left-4 right-4 top-1/2 -translate-y-1/2 z-50 bg-card border-2 border-primary rounded-2xl shadow-2xl p-5">
-            <h3 className="text-lg font-bold text-foreground mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
-              You&apos;re in! Enter to win
-            </h3>
+          <div className="fixed inset-0 bg-black/60 z-40" onClick={() => setShowEntryModal(false)} aria-hidden />
+          <div className="fixed left-4 right-4 top-1/2 -translate-y-1/2 z-50 bg-card border border-border rounded-2xl shadow-2xl p-5">
+            <h3 className="text-lg font-bold text-foreground mb-1">You&apos;re in! Enter to win</h3>
             <p className="text-sm text-muted-foreground mb-4">
-              Leave your name and phone number so we can contact you if you win the gift card raffle.
+              Leave your name and phone so we can contact you if you win the gift card raffle.
             </p>
             <label className="block text-xs font-semibold text-foreground mb-1">Name</label>
             <input

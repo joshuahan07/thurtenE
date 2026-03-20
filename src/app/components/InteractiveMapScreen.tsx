@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { CSSProperties } from 'react';
 import { X, ChevronLeft, List, MapPin, Star } from 'lucide-react';
 
 const MAP_IMAGE = '/image.png';
@@ -83,6 +84,15 @@ const sectionColors: Record<string, string> = {
   E: '#a79a03',
 };
 
+/** Day theme sets `--map-booth-fill` / `--map-booth-on-fill` for a single hue + black text. */
+function boothMarkerStyle(section: string): CSSProperties {
+  const fallbackBg = sectionColors[section] ?? '#fbee08';
+  return {
+    backgroundColor: `var(--map-booth-fill, ${fallbackBg})`,
+    color: `var(--map-booth-on-fill, #0f100d)`,
+  };
+}
+
 type ViewMode = 'list' | 'map';
 
 export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
@@ -153,8 +163,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
               <div key={section} className="mb-5">
                 <div className="flex items-center gap-2 mb-2">
                   <span
-                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-background shrink-0"
-                    style={{ backgroundColor: sectionColors[section] }}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                    style={boothMarkerStyle(section)}
                   >
                     {section}
                   </span>
@@ -174,8 +184,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                       className="w-full flex items-center gap-3 p-3.5 text-left border-b border-border last:border-b-0 hover:bg-muted/50 active:bg-muted transition-colors"
                     >
                       <span
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-background shrink-0"
-                        style={{ backgroundColor: sectionColors[booth.section] ?? '#fbee08' }}
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold shrink-0"
+                        style={boothMarkerStyle(booth.section)}
                       >
                         {booth.id}
                       </span>
@@ -280,9 +290,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                     transform: 'translate(-50%, -50%)',
                     width: '18px',
                     height: '18px',
-                    color: '#0f100d',
-                    backgroundColor: sectionColors[booth.section] ?? '#fbee08',
                     border: '1.5px solid rgba(255,255,255,0.6)',
+                    ...boothMarkerStyle(booth.section),
                   }}
                 >
                   {booth.id}
@@ -311,8 +320,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-start gap-3 flex-1">
                   <span
-                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold text-background shrink-0 mt-0.5"
-                    style={{ backgroundColor: sectionColors[selectedBooth.section] ?? '#fbee08' }}
+                    className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shrink-0 mt-0.5"
+                    style={boothMarkerStyle(selectedBooth.section)}
                   >
                     {selectedBooth.id}
                   </span>
