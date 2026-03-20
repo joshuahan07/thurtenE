@@ -94,7 +94,7 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
             href="https://maps.google.com/?q=Washington+University+in+St+Louis"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full mt-4 flex items-center justify-center gap-2 bg-primary text-primary-foreground py-3 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform hover:opacity-95"
+            className="w-full mt-4 flex items-center justify-center gap-2 bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] text-[#0f100d] py-3 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform hover:opacity-95"
           >
             <MapPin className="w-4 h-4" />
             Get Directions
@@ -154,7 +154,7 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
             href="https://www.thurtene.org/"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full flex items-center justify-center bg-primary text-primary-foreground py-3 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform hover:opacity-95"
+            className="w-full flex items-center justify-center bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] text-[#0f100d] py-3 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform hover:opacity-95"
           >
             Visit Thurtene.org →
           </a>

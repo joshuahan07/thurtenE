@@ -77,15 +77,15 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
           ].map((item) => (
             <div
               key={item.label}
-              className="bg-card border-2 border-[#fb923c] rounded-xl p-3 flex flex-col items-center shadow-sm"
+              className="border-2 border-[#fb923c] rounded-xl p-3 flex flex-col items-center shadow-sm bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316]"
             >
               <span
-                className="text-2xl font-bold text-accent"
+                className="text-2xl font-bold text-[#0f100d]"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {item.value}
               </span>
-              <span className="text-xs text-muted-foreground mt-0.5">{item.label}</span>
+              <span className="text-xs text-[#0f100d]/70 mt-0.5">{item.label}</span>
             </div>
           ))}
         </div>

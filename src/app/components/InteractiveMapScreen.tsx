@@ -128,7 +128,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
             onClick={() => setViewMode('list')}
             className={`flex-1 flex items-center justify-center gap-2 py-4 px-4 text-base font-bold transition-colors ${
               viewMode === 'list'
-                ? 'bg-primary text-primary-foreground'
+                ? 'bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] text-[#0f100d]'
                 : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
           >
@@ -140,7 +140,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
             onClick={() => setViewMode('map')}
             className={`flex-1 flex items-center justify-center gap-2 py-4 px-4 text-base font-bold transition-colors ${
               viewMode === 'map'
-                ? 'bg-primary text-primary-foreground'
+                ? 'bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] text-[#0f100d]'
                 : 'bg-card text-muted-foreground hover:bg-muted hover:text-foreground'
             }`}
           >

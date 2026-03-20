@@ -175,27 +175,29 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header — minimal */}
-      <header className="px-4 pt-4 pb-2 border-b border-border/60 bg-background">
-        <div className="flex items-center justify-between mb-2">
-          <button
-            type="button"
-            onClick={() => onNavigate('home')}
-            className="text-foreground p-1 -ml-1 rounded-lg flex items-center gap-0.5 hover:opacity-70 transition-opacity"
-            aria-label="Back to home"
-          >
-            <ChevronLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">Back</span>
-          </button>
-          <span className="w-14" aria-hidden />
-        </div>
-        <div className="text-center pb-2">
-          <h1 className="text-xl font-bold text-foreground tracking-tight">Scavenger Hunt</h1>
-          <p className="text-sm text-muted-foreground mt-1">Complete the hunt to enter the raffle!</p>
-        </div>
-      </header>
+      {/* Header */}
+      <div className="bg-card border-b-2 border-primary p-4 flex items-center justify-between shadow-lg">
+        <button
+          type="button"
+          onClick={() => onNavigate('home')}
+          className="text-foreground p-1 rounded-lg flex items-center gap-1 hover:text-accent transition-colors"
+        >
+          <ChevronLeft className="w-5 h-5" />
+          <span className="text-sm font-semibold">Back</span>
+        </button>
+        <h1
+          className="text-lg font-bold text-foreground"
+          style={{ fontFamily: "'Playfair Display', serif" }}
+        >
+          Scavenger Hunt
+        </h1>
+        <div className="w-16" />
+      </div>
 
       <div className="flex-1 px-4 py-4 pb-28 space-y-4 overflow-y-auto">
+        <p className="text-sm text-muted-foreground mt-1 text-center font-bold">
+          Complete the hunt to enter the raffle!
+        </p>
         {/* Progress — card like reference */}
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
           <div className="flex items-center justify-between text-sm mb-2">
@@ -218,9 +220,9 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
         <button
           type="button"
           onClick={() => setShowScanner(true)}
-          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-border bg-card text-foreground font-semibold text-sm shadow-sm active:scale-[0.99] transition-transform"
+          className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl border-2 border-[#ea580c]/40 bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] text-[#0f100d] font-semibold text-sm shadow-sm active:scale-[0.99] transition-transform"
         >
-          <Camera className="w-5 h-5 text-primary" />
+          <Camera className="w-5 h-5 text-[#0f100d]" />
           Scan QR code at booth
         </button>
 
