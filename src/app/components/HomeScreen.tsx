@@ -16,15 +16,10 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
         <img
           src={homeHeroBackground}
           alt="ThurtenE Carnival"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-[center_58%]"
         />
         {/* Dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-background" />
-        {/* Subtle diagonal stripe overlay for carnival feel */}
-        <div
-          className="absolute inset-0 carnival-stripe opacity-40"
-        />
-
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center px-6 pt-10 pb-8">
           {/* Full circular yellow ring completes the mark; artwork sits on white inside the circle */}

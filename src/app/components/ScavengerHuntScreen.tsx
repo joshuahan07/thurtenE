@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, Check, MapPin, Printer, X, Camera, ScanLine } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { upsertScavengerCompletion } from '../../services/keepinContactService';
+import { AnalyticsEventType, recordAnalyticsEvent } from '../../services/analyticsEvents';
 
 const SCAVENGER_STORAGE_KEY = 'thurtene-scavenger-tasks';
 const RAFFLE_ENTRY_KEY = 'thurtene-scavenger-raffle-entry';
@@ -85,6 +86,10 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
     const match = hash.match(/^#scavenger-section-([A-E])$/i);
     if (!match) return;
     const section = match[1].toUpperCase();
+    void recordAnalyticsEvent(AnalyticsEventType.QR_SECTION_COMPLETE, {
+      section,
+      source: 'hash_link',
+    });
     setTasks((prev) =>
       prev.map((t) => (t.section === section ? { ...t, completed: true } : t))
     );
@@ -113,6 +118,10 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
               .stop()
               .then(() => {
                 qrScannerRef.current = null;
+                void recordAnalyticsEvent(AnalyticsEventType.QR_SECTION_COMPLETE, {
+                  section,
+                  source: 'camera',
+                });
                 setTasks((prev) =>
                   prev.map((t) => (t.section === section ? { ...t, completed: true } : t))
                 );

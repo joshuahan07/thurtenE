@@ -7,6 +7,10 @@ import { EmailSignupScreen } from './components/EmailSignupScreen';
 import { InfoFaqScreen } from './components/InfoFaqScreen';
 import { StayUpdatedPromoModal } from './components/StayUpdatedPromoModal';
 import { HOME_ICON_URL, SCAVENGER_HUNT_ICON_URL } from './publicAssets';
+import { AnalyticsEventType, recordAnalyticsEvent } from '../services/analyticsEvents';
+
+const ANALYTICS_SESSION_KEY = 'thurtene-analytics-session';
+const ANALYTICS_INITIAL_SCREEN_KEY = 'thurtene-analytics-initial-screen';
 
 type Screen = 'home' | 'map' | 'scavenger' | 'signup' | 'info';
 
@@ -38,11 +42,57 @@ export default function App() {
   const [themeOpen, setThemeOpen] = useState(false);
   const [showStayUpdatedPromo, setShowStayUpdatedPromo] = useState(false);
 
-  // When opened via QR code (e.g. #scavenger-section-A), go to scavenger screen
+  // One “tab session” per browser tab (survives reload); see PAGE_LOAD for every load.
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem(ANALYTICS_SESSION_KEY)) return;
+      sessionStorage.setItem(ANALYTICS_SESSION_KEY, '1');
+    } catch {
+      return;
+    }
+    void recordAnalyticsEvent(AnalyticsEventType.APP_SESSION, {
+      path: window.location.pathname,
+    });
+  }, []);
+
+  // Every full page load (first open + reload); increments when you refresh.
+  useEffect(() => {
+    let navigationType: string | undefined;
+    try {
+      const nav = performance.getEntriesByType('navigation')[0] as
+        | PerformanceNavigationTiming
+        | undefined;
+      navigationType = nav?.type;
+    } catch {
+      // ignore
+    }
+    void recordAnalyticsEvent(AnalyticsEventType.PAGE_LOAD, {
+      path: window.location.pathname,
+      ...(navigationType ? { navigation_type: navigationType } : {}),
+    });
+  }, []);
+
+  // QR deep link → scavenger + one landing screen_view per tab (dedupes Strict Mode / refresh noise)
   useEffect(() => {
     const hash = window.location.hash;
     const match = hash.match(/^#scavenger-section-([A-E])$/i);
-    if (match) setCurrentScreen('scavenger');
+    if (match) {
+      setCurrentScreen('scavenger');
+    }
+    try {
+      if (sessionStorage.getItem(ANALYTICS_INITIAL_SCREEN_KEY)) return;
+      sessionStorage.setItem(ANALYTICS_INITIAL_SCREEN_KEY, '1');
+    } catch {
+      return;
+    }
+    if (match) {
+      void recordAnalyticsEvent(AnalyticsEventType.SCREEN_VIEW, {
+        screen: 'scavenger',
+        via: 'qr_hash',
+      });
+    } else {
+      void recordAnalyticsEvent(AnalyticsEventType.SCREEN_VIEW, { screen: 'home' });
+    }
   }, []);
 
   /** First visit: Stay Updated promo (skipped for scavenger QR links; persists per device after dismiss). */
@@ -80,6 +130,7 @@ export default function App() {
   const handleNavigate = (screen: string) => {
     setCurrentScreen(screen as Screen);
     window.scrollTo(0, 0);
+    void recordAnalyticsEvent(AnalyticsEventType.SCREEN_VIEW, { screen });
   };
 
   const dismissStayUpdatedPromo = () => {
