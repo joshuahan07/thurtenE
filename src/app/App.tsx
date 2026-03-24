@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Map, Info, Palette, CalendarDays } from 'lucide-react';
+import { Map, Info, CalendarDays } from 'lucide-react';
 import { HomeScreen } from './components/HomeScreen';
 import { InteractiveMapScreen } from './components/InteractiveMapScreen';
 import { ScavengerHuntScreen } from './components/ScavengerHuntScreen';
@@ -16,11 +16,6 @@ const ANALYTICS_INITIAL_SCREEN_KEY = 'thurtene-analytics-initial-screen';
 type Screen = 'home' | 'map' | 'scavenger' | 'schedule' | 'signup' | 'info';
 
 const STAY_UPDATED_PROMO_KEY = 'thurtene-stay-updated-promo-dismissed';
-const THEME_STORAGE_KEY = 'thurtene-theme';
-const THEMES = [
-  { id: 'day', label: 'Day', swatch1: '#fbee08', swatch2: '#0f100d' },
-  { id: 'night', label: 'Night', swatch1: '#0f100d', swatch2: '#fbee08' },
-] as const;
 
 const navItems = [
   { id: 'home',      label: 'Home',  icon: null },
@@ -40,8 +35,6 @@ function markStayUpdatedPromoDismissed() {
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('home');
-  const [themeId, setThemeId] = useState<(typeof THEMES)[number]['id']>('day');
-  const [themeOpen, setThemeOpen] = useState(false);
   const [showStayUpdatedPromo, setShowStayUpdatedPromo] = useState(false);
 
   // One “tab session” per browser tab (survives reload); see PAGE_LOAD for every load.
@@ -110,24 +103,9 @@ export default function App() {
     }
   }, []);
 
-  // Load + apply theme (stored per browser/device)
   useEffect(() => {
-    const saved = localStorage.getItem(THEME_STORAGE_KEY);
-    const validIds = new Set(THEMES.map((t) => t.id));
-    const next = saved && validIds.has(saved) ? (saved as (typeof THEMES)[number]['id']) : 'day';
-    setThemeId(next);
-    document.documentElement.setAttribute('data-theme', next);
+    document.documentElement.setAttribute('data-theme', 'day');
   }, []);
-
-  const applyTheme = (next: (typeof THEMES)[number]['id']) => {
-    setThemeId(next);
-    document.documentElement.setAttribute('data-theme', next);
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, next);
-    } catch {
-      // ignore
-    }
-  };
 
   const handleNavigate = (screen: string) => {
     setCurrentScreen(screen as Screen);
@@ -148,54 +126,6 @@ export default function App() {
 
   return (
     <div className="size-full bg-background overflow-auto">
-      {/* Theme picker (top-right) */}
-      <div className="fixed top-2 right-2 z-[60]">
-        <button
-          type="button"
-          onClick={() => setThemeOpen((v) => !v)}
-          className="p-2 rounded-xl bg-card border border-border shadow-lg text-foreground"
-          aria-label="Choose color theme"
-          title="Choose color theme"
-        >
-          <Palette className="w-5 h-5" />
-        </button>
-        {themeOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-[50]"
-              onClick={() => setThemeOpen(false)}
-              aria-hidden="true"
-            />
-            <div className="relative mt-2 z-[60] bg-card border border-border rounded-xl shadow-2xl p-2">
-              <div className="flex flex-col gap-2">
-                {THEMES.map((t) => (
-                  <button
-                    key={t.id}
-                    type="button"
-                    onClick={() => {
-                      applyTheme(t.id);
-                      setThemeOpen(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg border transition-colors ${
-                      themeId === t.id ? 'border-primary' : 'border-transparent hover:bg-muted/50'
-                    }`}
-                  >
-                    <span
-                      className="w-7 h-7 rounded-full shrink-0 border border-border"
-                      style={{ background: `linear-gradient(135deg, ${t.swatch1}, ${t.swatch2})` }}
-                    />
-                    <span className="text-sm font-semibold text-foreground">{t.label}</span>
-                    {themeId === t.id && (
-                      <span className="ml-auto text-xs font-bold text-accent">Selected</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
-
       <StayUpdatedPromoModal
         open={showStayUpdatedPromo}
         onDismiss={dismissStayUpdatedPromo}

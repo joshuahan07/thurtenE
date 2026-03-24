@@ -121,8 +121,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
       </div>
 
       {/* List / Map toggle – prominent */}
-      <div className="px-4 pt-3 pb-2">
-        <div className="flex rounded-xl overflow-hidden border-2 border-border shadow-lg">
+      <div className="px-4 pt-3 pb-2 w-full">
+        <div className="flex w-full min-w-0 rounded-xl overflow-hidden border-2 border-border shadow-lg">
           <button
             type="button"
             onClick={() => setViewMode('list')}
@@ -203,13 +203,13 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
           })}
         </div>
       ) : (
-        <>
-          <p className="text-xs text-center text-muted-foreground py-2 px-4">
+        <div className="px-4 pb-24">
+          <p className="text-xs text-center text-muted-foreground py-2">
             Tap a numbered badge to see booth details
           </p>
 
-          {/* Map key: DR. G's Fun House Stage – on top */}
-          <div className="mx-3 mb-3 bg-card border-2 border-[#fb923c] rounded-xl p-3">
+          {/* Map key: DR. G's Fun House Stage – on top (same horizontal inset as List/Map toggle) */}
+          <div className="mb-3 bg-card border-2 border-[#fb923c] rounded-xl p-3 w-full">
             <div className="flex items-center gap-2 mb-3">
               <img
                 src="/dr-g-ship.png"
@@ -270,7 +270,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
           </div>
 
           {/* Map – scrolls with page */}
-          <div className="relative mx-3 mb-6 rounded-xl overflow-hidden border-2 border-[#fb923c] shadow-xl">
+          <div className="relative mb-6 w-full rounded-xl overflow-hidden border-2 border-[#fb923c] shadow-xl">
             <img
               src={MAP_IMAGE}
               alt="ThurtenE Carnival Map"
@@ -299,7 +299,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
               );
             })}
           </div>
-        </>
+        </div>
       )}
 
       {/* Bottom Sheet Modal */}

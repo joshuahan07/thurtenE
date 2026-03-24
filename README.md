@@ -25,8 +25,8 @@ All images live in `src/assets/`:
 - `carnival-hero.jpg` — Hero background photo
 - `thurtene-site-map.jpeg` — Interactive map image
 
-## Themes
-Two palettes in the theme picker: **Day** (default, cream + black/yellow + orange accent) and **Night** (black & yellow). Theme choice is stored in `localStorage` under `thurtene-theme`.
+## Theme
+The app uses a single **day** palette (cream + black/yellow + orange accent). `data-theme="day"` is set on `<html>` on load.
 
 ## Color Palette (legacy notes)
 The original design referenced a warm dark palette:
