@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Map, Info, Palette } from 'lucide-react';
+import { Map, Info, Palette, CalendarDays } from 'lucide-react';
 import { HomeScreen } from './components/HomeScreen';
 import { InteractiveMapScreen } from './components/InteractiveMapScreen';
 import { ScavengerHuntScreen } from './components/ScavengerHuntScreen';
 import { EmailSignupScreen } from './components/EmailSignupScreen';
 import { InfoFaqScreen } from './components/InfoFaqScreen';
+import { EventScheduleScreen } from './components/EventScheduleScreen';
 import { StayUpdatedPromoModal } from './components/StayUpdatedPromoModal';
 import { HOME_ICON_URL, SCAVENGER_HUNT_ICON_URL } from './publicAssets';
 import { AnalyticsEventType, recordAnalyticsEvent } from '../services/analyticsEvents';
@@ -12,7 +13,7 @@ import { AnalyticsEventType, recordAnalyticsEvent } from '../services/analyticsE
 const ANALYTICS_SESSION_KEY = 'thurtene-analytics-session';
 const ANALYTICS_INITIAL_SCREEN_KEY = 'thurtene-analytics-initial-screen';
 
-type Screen = 'home' | 'map' | 'scavenger' | 'signup' | 'info';
+type Screen = 'home' | 'map' | 'scavenger' | 'schedule' | 'signup' | 'info';
 
 const STAY_UPDATED_PROMO_KEY = 'thurtene-stay-updated-promo-dismissed';
 const THEME_STORAGE_KEY = 'thurtene-theme';
@@ -25,6 +26,7 @@ const navItems = [
   { id: 'home',      label: 'Home',  icon: null },
   { id: 'map',       label: 'Map',   icon: Map },
   { id: 'scavenger', label: 'Hunt',  icon: null },
+  { id: 'schedule',  label: 'Schedule', icon: CalendarDays },
   { id: 'info',      label: 'Info',  icon: Info },
 ] as const;
 
@@ -206,6 +208,7 @@ export default function App() {
         {currentScreen === 'map'       && <InteractiveMapScreen onNavigate={handleNavigate} />}
         {currentScreen === 'scavenger' && <ScavengerHuntScreen  onNavigate={handleNavigate} />}
         {currentScreen === 'signup'    && <EmailSignupScreen    onNavigate={handleNavigate} />}
+        {currentScreen === 'schedule'  && <EventScheduleScreen  onNavigate={handleNavigate} />}
         {currentScreen === 'info'      && <InfoFaqScreen        onNavigate={handleNavigate} />}
       </div>
 

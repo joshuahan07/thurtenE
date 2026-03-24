@@ -107,7 +107,7 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
           return (
             <div key={section.title} className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-[#ea580c]">
               <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
-                <SectionIcon className="w-4 h-4 text-primary" />
+                <SectionIcon className="w-4 h-4 text-[#ea580c]" strokeWidth={2} />
                 <h2
                   className="text-sm font-bold text-accent uppercase tracking-widest"
                 >

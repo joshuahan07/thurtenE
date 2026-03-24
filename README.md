@@ -52,7 +52,7 @@ Optional lightweight counts (opens, screen views, QR completions) go to table **
 |---|---|
 | `app_session` | **Once per browser tab** until the tab closes (`sessionStorage`); **reload does not** add another |
 | `page_load` | **Every** full load of the app (first open **and** reload); use `count(*)` for “total loads” |
-| `screen_view` | Navigation; `metadata.screen` = `home` \| `map` \| `scavenger` \| `signup` \| `info`; QR landings may include `via: "qr_hash"` |
+| `screen_view` | Navigation; `metadata.screen` = `home` \| `map` \| `scavenger` \| `schedule` \| `signup` \| `info`; QR landings may include `via: "qr_hash"` |
 | `qr_section_complete` | Section marked complete; `metadata.section` = `A`–`E`, `metadata.source` = `hash_link` \| `camera` |
 
 **Example SQL**
