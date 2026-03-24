@@ -51,18 +51,16 @@ const SCHEDULE_ROWS: ScheduleRow[] = [
 const pillClass =
   'inline-flex items-center justify-center rounded-full bg-[rgba(232,91,26,0.12)] px-2.5 py-1 min-h-[1.75rem] text-[#E85B1A]';
 
-/** Event schedule — full-width header like Map/Info; times = Bebas Neue, body = DM Sans. */
+/** Event schedule — header matches Map / Info / Scavenger; DM Sans only on list rows. */
 export function EventScheduleScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   return (
-    <div
-      className="min-h-screen bg-background flex flex-col text-[#1A0E04] antialiased"
-      style={{ fontFamily: "'DM Sans', ui-sans-serif, system-ui, sans-serif" }}
-    >
-      <div className="sticky top-0 z-10 bg-card border-b-2 border-primary p-4 flex items-center justify-between shadow-lg">
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Header — same structure as InteractiveMapScreen / InfoFaqScreen / ScavengerHuntScreen */}
+      <div className="bg-card border-b-2 border-primary p-4 flex items-center justify-between shadow-lg">
         <button
           type="button"
           onClick={() => onNavigate('home')}
-          className="text-foreground p-1 rounded-lg flex items-center gap-1 hover:text-accent transition-colors"
+          className="text-foreground p-1 flex items-center gap-1 hover:text-accent transition-colors"
         >
           <ChevronLeft className="w-5 h-5" />
           <span className="text-sm font-semibold">Back</span>
@@ -73,10 +71,13 @@ export function EventScheduleScreen({ onNavigate }: { onNavigate: (screen: strin
         >
           Event Schedule
         </h1>
-        <div className="w-16" aria-hidden />
+        <div className="w-16" />
       </div>
 
-      <div className="flex-1 px-4 pt-4 pb-28 w-full">
+      <div
+        className="flex-1 px-4 py-4 pb-28 w-full text-[#1A0E04] antialiased"
+        style={{ fontFamily: "'DM Sans', ui-sans-serif, system-ui, sans-serif" }}
+      >
         <div className="rounded-[24px] border border-border bg-card overflow-hidden shadow border-l-4 border-l-[#ea580c]">
           {SCHEDULE_ROWS.map((row, i) => (
             <div
