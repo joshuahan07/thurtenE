@@ -7,6 +7,19 @@ import homeHeroBackground from '../../assets/home-hero-background.png';
 const HOME_ACTION_CLASS =
   'w-full bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] text-[#0f100d] py-5 px-6 text-lg font-bold rounded-xl flex items-center justify-center gap-3 shadow-sm hover:brightness-[1.03] active:scale-[0.98] transition-transform';
 
+/** Black fill + yellow outline (hero title / dates). */
+const heroLetterOutline = {
+  color: '#0f100d',
+  WebkitTextStroke: '2px #fbee08',
+  paintOrder: 'stroke fill' as const,
+};
+
+const heroLetterOutlineSm = {
+  color: '#0f100d',
+  WebkitTextStroke: '1.5px #fbee08',
+  paintOrder: 'stroke fill' as const,
+};
+
 export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -33,12 +46,15 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
             </div>
           </div>
           <h1
-            className="text-4xl font-extrabold text-center text-white tracking-tight drop-shadow-lg"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            className="text-4xl font-extrabold text-center tracking-tight"
+            style={{ fontFamily: "'Playfair Display', serif", ...heroLetterOutline }}
           >
             ThurtenE Carnival
           </h1>
-          <p className="mt-2 text-white text-sm font-bold uppercase tracking-widest drop-shadow">
+          <p
+            className="mt-2 text-sm font-bold uppercase tracking-widest text-center"
+            style={heroLetterOutlineSm}
+          >
             April 17 – 19, 2026
           </p>
           <a
@@ -54,15 +70,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col px-5 pt-2 pb-6">
-
-        {/* Description card */}
-        <div className="rounded-xl border-2 border-[#d4183d] bg-[#f7f2e8] p-5 mb-5 shadow-lg">
-          <p className="text-center text-[#0f100d] leading-relaxed font-medium">
-            Three days of carnival games, live entertainment, incredible food, and prizes on the WashU campus.
-          </p>
-        </div>
-
+      <div className="flex-1 flex flex-col px-5 pt-4 pb-6">
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           {[
@@ -75,12 +83,12 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
               className="bg-card border-2 border-[#fb923c] rounded-xl p-3 flex flex-col items-center shadow-sm"
             >
               <span
-                className="text-2xl font-bold text-accent"
+                className="text-2xl font-bold text-[#0f100d]"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {item.value}
               </span>
-              <span className="text-xs text-muted-foreground mt-0.5">{item.label}</span>
+              <span className="text-xs font-semibold text-[#0f100d] mt-0.5">{item.label}</span>
             </div>
           ))}
         </div>
