@@ -7,16 +7,16 @@ import homeHeroBackground from '../../assets/home-hero-background.png';
 const HOME_ACTION_CLASS =
   'w-full bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] text-[#0f100d] py-5 px-6 text-lg font-bold rounded-xl flex items-center justify-center gap-3 shadow-sm hover:brightness-[1.03] active:scale-[0.98] transition-transform';
 
-/** Black fill + yellow outline (hero title / dates). */
+/** Yellow fill + black outline (hero title / dates). */
 const heroLetterOutline = {
-  color: '#0f100d',
-  WebkitTextStroke: '2px #fbee08',
+  color: '#fbee08',
+  WebkitTextStroke: '3px #0f100d',
   paintOrder: 'stroke fill' as const,
 };
 
 const heroLetterOutlineSm = {
-  color: '#0f100d',
-  WebkitTextStroke: '1.5px #fbee08',
+  color: '#fbee08',
+  WebkitTextStroke: '2.5px #0f100d',
   paintOrder: 'stroke fill' as const,
 };
 
