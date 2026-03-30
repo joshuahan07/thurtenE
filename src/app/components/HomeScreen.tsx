@@ -33,10 +33,10 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
         />
         {/* Dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-background" />
-        {/* Content */}
-        <div className="relative z-10 flex flex-col items-center px-6 pt-10 pb-8">
+        {/* Content — centered horizontally + vertically in hero */}
+        <div className="relative z-10 flex min-h-[300px] w-full flex-col items-center justify-center px-6 py-8 text-center gap-3">
           {/* Full circular yellow ring completes the mark; artwork sits on white inside the circle */}
-          <div className="mb-4 inline-flex rounded-full p-[3px] bg-primary shadow-2xl ring-2 ring-white/35">
+          <div className="inline-flex rounded-full p-[3px] bg-primary shadow-2xl ring-2 ring-white/35">
             <div className="rounded-full bg-white p-0.5 sm:p-1 overflow-hidden">
               <img
                 src={heroMark}
@@ -46,13 +46,13 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
             </div>
           </div>
           <h1
-            className="text-4xl font-extrabold text-center tracking-tight"
+            className="w-full text-4xl font-extrabold text-center tracking-tight leading-tight"
             style={{ fontFamily: "'Playfair Display', serif", ...heroLetterOutline }}
           >
             ThurtenE Carnival
           </h1>
           <p
-            className="mt-2 text-sm font-bold uppercase tracking-widest text-center"
+            className="w-full text-sm font-bold uppercase tracking-widest text-center"
             style={heroLetterOutlineSm}
           >
             April 17 – 19, 2026
@@ -61,10 +61,11 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
             href="https://www.thurtene.org/"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-1.5 bg-[#ea580c] text-white px-4 py-2 rounded-full text-sm font-medium shadow-md hover:bg-[#c2410c] transition-colors"
+            className="inline-flex items-center justify-center gap-1.5 bg-[#fbee08] text-[#0f100d] px-4 py-2 rounded-full text-sm font-bold shadow-md border border-[#0f100d]/20 hover:brightness-95 active:scale-[0.98] transition-all"
+            style={{ fontFamily: "'Inter', sans-serif" }}
           >
             <ExternalLink className="w-3.5 h-3.5 shrink-0" />
-            Official Website
+            ThurtenE Website
           </a>
         </div>
       </div>
