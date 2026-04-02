@@ -710,8 +710,18 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                     left: `${clampedLeft}%`,
                     transform: 'translateX(-50%)',
                   };
-                } else if (activeSectionPopup === 'C' || activeSectionPopup === 'D') {
-                  // To the left of the button, anchored at top
+                } else if (activeSectionPopup === 'C') {
+                  // To the left of C, vertically centered on the button
+                  const spaceLeft = hs.left - hs.width / 2 - pad * 2;
+                  const w = Math.min(desiredWidth, spaceLeft);
+                  style = {
+                    width: `${w}%`,
+                    left: `${pad}%`,
+                    top: `${hs.top}%`,
+                    transform: 'translateY(-50%)',
+                  };
+                } else if (activeSectionPopup === 'D') {
+                  // To the left of D, anchored at top
                   const spaceLeft = hs.left - hs.width / 2 - pad * 2;
                   const w = Math.min(desiredWidth, spaceLeft);
                   style = {
