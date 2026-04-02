@@ -687,33 +687,66 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                   );
                 })}
             </div>
-            {/* Section popup – centered overlay on the map so every section renders at the same size */}
-            {!editingHotspots && activeSectionPopup && (
-              <div
-                className="absolute inset-0 z-20 flex items-center justify-center p-3"
-                onClick={() => setActiveSectionPopup(null)}
-              >
-                <div
-                  className="relative bg-card border-2 border-[#f97316] rounded-none shadow-lg"
-                  onClick={(e) => e.stopPropagation()}
-                  style={{ maxWidth: '90%', maxHeight: '90%', display: 'flex' }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setActiveSectionPopup(null)}
-                    className="absolute top-1 right-1 z-10 w-5 h-5 flex items-center justify-center rounded-full bg-black/80 text-white hover:bg-black/90 shadow-md border border-white/70"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                  <img
-                    src={`/${activeSectionPopup}.png`}
-                    alt={`Section ${activeSectionPopup}`}
-                    className="block object-contain"
-                    style={{ maxWidth: '100%', maxHeight: '100%' }}
-                  />
-                </div>
-              </div>
-            )}
+            {/* Section popup anchored near the hotspot button */}
+            {!editingHotspots &&
+              activeSectionPopup &&
+              (() => {
+                const hs = hotspots[activeSectionPopup];
+                if (!hs) return null;
+
+                // Consistent popup width (% of map container) so all sections look the same
+                const popupWidthPct = 48;
+
+                let style: CSSProperties;
+
+                if (activeSectionPopup === 'A' || activeSectionPopup === 'B') {
+                  // Above the button, horizontally centered on it (clamped to stay in bounds)
+                  const minLeft = popupWidthPct / 2;
+                  const maxLeft = 100 - popupWidthPct / 2;
+                  const clampedLeft = Math.max(minLeft, Math.min(maxLeft, hs.left));
+                  style = {
+                    width: `${popupWidthPct}%`,
+                    bottom: `${100 - hs.top + hs.height / 2 + 1}%`,
+                    left: `${clampedLeft}%`,
+                    transform: 'translateX(-50%)',
+                  };
+                } else if (activeSectionPopup === 'C' || activeSectionPopup === 'D') {
+                  // To the left of the button, vertically centered on it
+                  style = {
+                    width: `${popupWidthPct}%`,
+                    right: `${100 - hs.left + hs.width / 2 + 1}%`,
+                    top: `${hs.top}%`,
+                    transform: 'translateY(-50%)',
+                  };
+                } else {
+                  // E: to the right of the button, vertically centered on it
+                  style = {
+                    width: `${popupWidthPct}%`,
+                    left: `${hs.left + hs.width / 2 + 1}%`,
+                    top: `${hs.top}%`,
+                    transform: 'translateY(-50%)',
+                  };
+                }
+
+                return (
+                  <div className="absolute z-20" style={style}>
+                    <div className="relative bg-card border-2 border-[#f97316] rounded-none shadow-lg">
+                      <button
+                        type="button"
+                        onClick={() => setActiveSectionPopup(null)}
+                        className="absolute top-1 right-1 z-10 w-5 h-5 flex items-center justify-center rounded-full bg-black/80 text-white hover:bg-black/90 shadow-md border border-white/70"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                      <img
+                        src={`/${activeSectionPopup}.png`}
+                        alt={`Section ${activeSectionPopup}`}
+                        className="block w-full h-auto"
+                      />
+                    </div>
+                  </div>
+                );
+              })()}
           </div>
 
           {/* Hotspot editing controls previously rendered here – intentionally hidden now to keep map UI clean. */}
