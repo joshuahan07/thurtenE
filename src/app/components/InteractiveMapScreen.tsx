@@ -744,7 +744,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
 
                 return (
                   <div className="absolute z-20" style={style}>
-                    <div className="relative bg-card border-2 border-[#f97316] rounded-none shadow-lg overflow-hidden flex-1 min-h-0">
+                    <div className="relative border-2 border-[#f97316] rounded-none shadow-lg overflow-hidden flex-1 min-h-0">
                       <button
                         type="button"
                         onClick={() => setActiveSectionPopup(null)}
