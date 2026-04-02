@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, PointerEvent } from 'react';
 import { X, ChevronLeft, ChevronDown, List, MapPin, Star, Store } from 'lucide-react';
 
 // Static carnival map image served from public/
@@ -172,6 +172,84 @@ function saveHotspots(next: Record<MapHotspotId, MapHotspot>): void {
   }
 }
 
+/** Section image popup frame: same percent model as hotspots (center x/y, width/height % of map). */
+const POPUP_LAYOUT_STORAGE_KEY = 'thurtene-section-popup-layouts-v1';
+
+function defaultPopupLayouts(): Record<MapHotspotId, MapHotspot> {
+  return {
+    A: {
+      id: 'A',
+      top: 22.217238178283157,
+      left: 83.15335507202744,
+      width: 29.586287802134805,
+      height: 38.52093119875024,
+    },
+    B: {
+      id: 'B',
+      top: 24.22151907237965,
+      left: 72.90936654834347,
+      width: 33.69795892494928,
+      height: 42.16889032206055,
+    },
+    C: {
+      id: 'C',
+      top: 66.52894111008102,
+      left: 33.557429006085194,
+      width: 39.02066430020284,
+      height: 53.97553307267524,
+    },
+    D: {
+      id: 'D',
+      top: 35.123960390718416,
+      left: 22.694166244083842,
+      width: 33.14095250169033,
+      height: 52.03447673559327,
+    },
+    E: {
+      id: 'E',
+      top: 28.177388582100576,
+      left: 73.8969056372549,
+      width: 32.694208502366465,
+      height: 46.598505918551055,
+    },
+  };
+}
+
+function loadSavedPopupLayouts(): Record<MapHotspotId, MapHotspot> {
+  try {
+    const raw = localStorage.getItem(POPUP_LAYOUT_STORAGE_KEY);
+    if (!raw) return defaultPopupLayouts();
+    const parsed = JSON.parse(raw) as Partial<Record<MapHotspotId, Partial<MapHotspot>>>;
+    const base = defaultPopupLayouts();
+    (['A', 'B', 'C', 'D', 'E'] as MapHotspotId[]).forEach((id) => {
+      const stored = parsed?.[id];
+      if (!stored) return;
+      const clamp = (v: unknown, min: number, max: number, fallback: number) => {
+        if (typeof v !== 'number' || Number.isNaN(v)) return fallback;
+        return Math.min(max, Math.max(min, v));
+      };
+      base[id] = {
+        id,
+        top: clamp(stored.top, 0, 100, base[id].top),
+        left: clamp(stored.left, 0, 100, base[id].left),
+        width: clamp(stored.width, 5, 100, base[id].width),
+        height: clamp(stored.height, 5, 100, base[id].height),
+      };
+    });
+    return base;
+  } catch {
+    return defaultPopupLayouts();
+  }
+}
+
+function savePopupLayouts(next: Record<MapHotspotId, MapHotspot>): void {
+  try {
+    localStorage.setItem(POPUP_LAYOUT_STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    // ignore
+  }
+}
+
 type ViewMode = 'list' | 'map';
 
 export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
@@ -180,8 +258,12 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
   const [hotspots, setHotspots] = useState<Record<MapHotspotId, MapHotspot>>(() =>
     loadSavedHotspots()
   );
+  const [popupLayouts, setPopupLayouts] = useState<Record<MapHotspotId, MapHotspot>>(() =>
+    loadSavedPopupLayouts()
+  );
   // Editing mode is now internal-only; end users always see the locked button view.
   const [editingHotspots] = useState<boolean>(false);
+  const [editingSectionPopups, setEditingSectionPopups] = useState(false);
   const [activeSectionPopup, setActiveSectionPopup] = useState<MapHotspotId | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [openSections, setOpenSections] = useState<Record<MapHotspotId, boolean>>({
@@ -204,6 +286,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
   };
 
   const [activeDrag, setActiveDrag] = useState<ActiveHotspotDrag | null>(null);
+  const [activePopupDrag, setActivePopupDrag] = useState<ActiveHotspotDrag | null>(null);
 
   const beginDrag = (
     id: MapHotspotId,
@@ -328,6 +411,133 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
 
   const endDrag = () => {
     setActiveDrag(null);
+  };
+
+  const beginPopupDrag = (
+    id: MapHotspotId,
+    mode: 'move' | 'resize',
+    handle: ActiveHotspotDrag['handle'],
+    clientX: number,
+    clientY: number
+  ) => {
+    const current = popupLayouts[id];
+    setActivePopupDrag({
+      id,
+      mode,
+      handle,
+      startX: clientX,
+      startY: clientY,
+      start: { ...current },
+    });
+  };
+
+  const updatePopupDrag = (clientX: number, clientY: number) => {
+    if (!activePopupDrag || !mapRef.current) return;
+    const rect = mapRef.current.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return;
+    const dx = clientX - activePopupDrag.startX;
+    const dy = clientY - activePopupDrag.startY;
+    const dxPct = (dx / rect.width) * 100;
+    const dyPct = (dy / rect.height) * 100;
+
+    setPopupLayouts((prev) => {
+      const current = prev[activePopupDrag.id] ?? activePopupDrag.start;
+      let next: MapHotspot = { ...current };
+
+      if (activePopupDrag.mode === 'move' || activePopupDrag.handle === 'move') {
+        next.top = Math.min(100, Math.max(0, activePopupDrag.start.top + dyPct));
+        next.left = Math.min(100, Math.max(0, activePopupDrag.start.left + dxPct));
+      } else {
+        const minSize = 5;
+
+        const start = activePopupDrag.start;
+        const halfW = start.width / 2;
+        const halfH = start.height / 2;
+        const startLeftEdge = start.left - halfW;
+        const startRightEdge = start.left + halfW;
+        const startTopEdge = start.top - halfH;
+        const startBottomEdge = start.top + halfH;
+
+        let leftEdge = startLeftEdge;
+        let rightEdge = startRightEdge;
+        let topEdge = startTopEdge;
+        let bottomEdge = startBottomEdge;
+
+        switch (activePopupDrag.handle) {
+          case 'se':
+            rightEdge = startRightEdge + dxPct;
+            bottomEdge = startBottomEdge + dyPct;
+            break;
+          case 'sw':
+            leftEdge = startLeftEdge + dxPct;
+            bottomEdge = startBottomEdge + dyPct;
+            break;
+          case 'ne':
+            rightEdge = startRightEdge + dxPct;
+            topEdge = startTopEdge + dyPct;
+            break;
+          case 'nw':
+            leftEdge = startLeftEdge + dxPct;
+            topEdge = startTopEdge + dyPct;
+            break;
+          case 'n':
+            topEdge = startTopEdge + dyPct;
+            break;
+          case 's':
+            bottomEdge = startBottomEdge + dyPct;
+            break;
+          case 'e':
+            rightEdge = startRightEdge + dxPct;
+            break;
+          case 'w':
+            leftEdge = startLeftEdge + dxPct;
+            break;
+          default:
+            break;
+        }
+
+        leftEdge = Math.max(0, Math.min(100, leftEdge));
+        rightEdge = Math.max(0, Math.min(100, rightEdge));
+        topEdge = Math.max(0, Math.min(100, topEdge));
+        bottomEdge = Math.max(0, Math.min(100, bottomEdge));
+
+        let newWidth = rightEdge - leftEdge;
+        let newHeight = bottomEdge - topEdge;
+
+        if (newWidth < minSize) {
+          if (activePopupDrag.handle === 'se' || activePopupDrag.handle === 'ne') {
+            rightEdge = leftEdge + minSize;
+          } else {
+            leftEdge = rightEdge - minSize;
+          }
+          newWidth = minSize;
+        }
+        if (newHeight < minSize) {
+          if (activePopupDrag.handle === 'se' || activePopupDrag.handle === 'sw') {
+            bottomEdge = topEdge + minSize;
+          } else {
+            topEdge = bottomEdge - minSize;
+          }
+          newHeight = minSize;
+        }
+
+        next.width = Math.min(100, Math.max(minSize, newWidth));
+        next.height = Math.min(100, Math.max(minSize, newHeight));
+        next.left = leftEdge + next.width / 2;
+        next.top = topEdge + next.height / 2;
+      }
+
+      return { ...prev, [activePopupDrag.id]: next };
+    });
+  };
+
+  const endPopupDrag = () => {
+    setActivePopupDrag(null);
+  };
+
+  const endMapPointer = () => {
+    endDrag();
+    endPopupDrag();
   };
 
   return (
@@ -548,9 +758,12 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
               if (activeDrag) {
                 updateDrag(e.clientX, e.clientY);
               }
+              if (activePopupDrag) {
+                updatePopupDrag(e.clientX, e.clientY);
+              }
             }}
-            onPointerUp={endDrag}
-            onPointerLeave={endDrag}
+            onPointerUp={endMapPointer}
+            onPointerLeave={endMapPointer}
           >
             <div className="relative rounded-xl overflow-hidden">
             <img
@@ -678,7 +891,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316]">
                         <span
                           className="font-bold tracking-[0.05em] text-black"
-                          style={{ fontFamily: "'Inter', sans-serif", fontSize: '2vw' }}
+                          style={{ fontFamily: "'Inter', sans-serif", fontSize: '1.7vw' }}
                         >
                           {id}
                         </span>
@@ -687,81 +900,147 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                   );
                 })}
             </div>
-            {/* Section popup anchored near the hotspot button */}
-            {!editingHotspots &&
-              activeSectionPopup &&
-              (() => {
-                const hs = hotspots[activeSectionPopup];
-                if (!hs) return null;
+            {/* Section image popup: percent frame (editable); orange border tracks image box */}
+            {!editingHotspots && activeSectionPopup && (() => {
+              const pl = popupLayouts[activeSectionPopup];
+              if (!pl) return null;
+              const editing = editingSectionPopups;
 
-                const pad = 2; // % padding from map edges
-                const desiredWidth = 48;
+              const handleResizeDown = (
+                e: PointerEvent<HTMLDivElement>,
+                handle: ActiveHotspotDrag['handle']
+              ) => {
+                e.preventDefault();
+                e.stopPropagation();
+                (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+                beginPopupDrag(activeSectionPopup, 'resize', handle, e.clientX, e.clientY);
+              };
 
-                let style: CSSProperties;
-
-                if (activeSectionPopup === 'A' || activeSectionPopup === 'B') {
-                  // Above the button, anchored at top of map
-                  const minLeft = desiredWidth / 2 + pad;
-                  const maxLeft = 100 - desiredWidth / 2 - pad;
-                  const clampedLeft = Math.max(minLeft, Math.min(maxLeft, hs.left));
-                  style = {
-                    width: `${desiredWidth}%`,
-                    top: `${pad}%`,
-                    left: `${clampedLeft}%`,
-                    transform: 'translateX(-50%)',
-                  };
-                } else if (activeSectionPopup === 'C') {
-                  // To the left of C, vertically centered on the button
-                  const spaceLeft = hs.left - hs.width / 2 - pad * 2;
-                  const w = Math.min(desiredWidth, spaceLeft);
-                  style = {
-                    width: `${w}%`,
-                    left: `${pad}%`,
-                    top: `${hs.top}%`,
-                    transform: 'translateY(-50%)',
-                  };
-                } else if (activeSectionPopup === 'D') {
-                  // To the left of D, anchored at top
-                  const spaceLeft = hs.left - hs.width / 2 - pad * 2;
-                  const w = Math.min(desiredWidth, spaceLeft);
-                  style = {
-                    width: `${w}%`,
-                    left: `${pad}%`,
-                    top: `${pad}%`,
-                  };
-                } else {
-                  // E: to the right of the button, anchored at top
-                  const spaceRight = 100 - hs.left - hs.width / 2 - pad * 2;
-                  const w = Math.min(desiredWidth, spaceRight);
-                  style = {
-                    width: `${w}%`,
-                    right: `${pad}%`,
-                    top: `${pad}%`,
-                  };
-                }
-
-                return (
-                  <div className="absolute z-20" style={style}>
-                    <div className="relative border-2 border-[#f97316] rounded-none shadow-lg overflow-hidden">
-                      <button
-                        type="button"
-                        onClick={() => setActiveSectionPopup(null)}
-                        className="absolute top-1 right-1 z-10 w-5 h-5 flex items-center justify-center rounded-full bg-black/80 text-white hover:bg-black/90 shadow-md border border-white/70"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                      <img
-                        src={`/${activeSectionPopup}.png`}
-                        alt={`Section ${activeSectionPopup}`}
-                        className="block w-full h-auto"
+              return (
+                <div
+                  className={`absolute z-20 flex items-center justify-center overflow-visible pointer-events-auto ${
+                    editing ? 'cursor-move ring-2 ring-[#facc15] ring-offset-2 ring-offset-transparent' : ''
+                  }`}
+                  style={{
+                    top: `${pl.top}%`,
+                    left: `${pl.left}%`,
+                    width: `${pl.width}%`,
+                    height: `${pl.height}%`,
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                  onPointerDown={
+                    editing
+                      ? (e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+                          beginPopupDrag(activeSectionPopup, 'move', 'move', e.clientX, e.clientY);
+                        }
+                      : undefined
+                  }
+                >
+                  {editing && (
+                    <>
+                      <div
+                        className="absolute -top-1 -left-1 z-30 w-3 h-3 bg-transparent cursor-nwse-resize"
+                        onPointerDown={(e) => handleResizeDown(e, 'nw')}
                       />
-                    </div>
+                      <div
+                        className="absolute -top-1 left-1/2 z-30 -translate-x-1/2 w-3 h-3 bg-transparent cursor-n-resize"
+                        onPointerDown={(e) => handleResizeDown(e, 'n')}
+                      />
+                      <div
+                        className="absolute -top-1 -right-1 z-30 w-3 h-3 bg-transparent cursor-nesw-resize"
+                        onPointerDown={(e) => handleResizeDown(e, 'ne')}
+                      />
+                      <div
+                        className="absolute -bottom-1 -left-1 z-30 w-3 h-3 bg-transparent cursor-nesw-resize"
+                        onPointerDown={(e) => handleResizeDown(e, 'sw')}
+                      />
+                      <div
+                        className="absolute -bottom-1 left-1/2 z-30 -translate-x-1/2 w-3 h-3 bg-transparent cursor-s-resize"
+                        onPointerDown={(e) => handleResizeDown(e, 's')}
+                      />
+                      <div
+                        className="absolute top-1/2 -left-1 z-30 -translate-y-1/2 w-3 h-3 bg-transparent cursor-w-resize"
+                        onPointerDown={(e) => handleResizeDown(e, 'w')}
+                      />
+                      <div
+                        className="absolute top-1/2 -right-1 z-30 -translate-y-1/2 w-3 h-3 bg-transparent cursor-e-resize"
+                        onPointerDown={(e) => handleResizeDown(e, 'e')}
+                      />
+                      <div
+                        className="absolute -bottom-1 -right-1 z-30 w-3 h-3 bg-transparent cursor-nwse-resize"
+                        onPointerDown={(e) => handleResizeDown(e, 'se')}
+                      />
+                    </>
+                  )}
+                  <div className="relative inline-block max-h-full max-w-full align-middle">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveSectionPopup(null);
+                      }}
+                      className="absolute top-1 right-1 z-10 w-5 h-5 flex items-center justify-center rounded-full bg-black/80 text-white hover:bg-black/90 shadow-md border border-white/70"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                    <img
+                      src={`/${activeSectionPopup}.png`}
+                      alt={`Section ${activeSectionPopup}`}
+                      className="block max-h-full max-w-full h-auto w-auto border-2 border-[#f97316] shadow-lg"
+                    />
                   </div>
-                );
-              })()}
+                </div>
+              );
+            })()}
           </div>
 
-          {/* Hotspot editing controls previously rendered here – intentionally hidden now to keep map UI clean. */}
+          <div className="mt-3 flex flex-col items-center gap-2">
+            {editingSectionPopups ? (
+              <>
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      savePopupLayouts(popupLayouts);
+                      setEditingSectionPopups(false);
+                    }}
+                    className="rounded-lg border-2 border-[#f97316] bg-gradient-to-br from-[#fbee08] to-[#ffc14a] px-4 py-2 text-sm font-bold text-[#0f100d] shadow"
+                  >
+                    Lock layouts
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPopupLayouts(loadSavedPopupLayouts());
+                      setEditingSectionPopups(false);
+                    }}
+                    className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground"
+                  >
+                    Cancel
+                  </button>
+                </div>
+                <p className="text-center text-xs text-muted-foreground px-2">
+                  Tap A–E to open each image, then drag the frame or corners. Lock saves to this
+                  device; copy{' '}
+                  <code className="rounded bg-muted px-1 py-0.5 text-[10px]">
+                    localStorage[&quot;{POPUP_LAYOUT_STORAGE_KEY}&quot;]
+                  </code>{' '}
+                  to bake defaults into code if you want.
+                </p>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setEditingSectionPopups(true)}
+                className="rounded-lg border border-border bg-muted/80 px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted"
+              >
+                Edit section image frames
+              </button>
+            )}
+          </div>
         </div>
       )}
 
