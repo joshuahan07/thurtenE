@@ -99,11 +99,41 @@ const HOTSPOT_STORAGE_KEY = 'thurtene-map-hotspots-v1';
 
 function defaultHotspots(): Record<MapHotspotId, MapHotspot> {
   return {
-    A: { id: 'A', top: 55, left: 78, width: 18, height: 16 },
-    B: { id: 'B', top: 52, left: 55, width: 18, height: 16 },
-    C: { id: 'C', top: 72, left: 50, width: 18, height: 16 },
-    D: { id: 'D', top: 45, left: 25, width: 18, height: 22 },
-    E: { id: 'E', top: 32, left: 58, width: 14, height: 18 },
+    A: {
+      id: 'A',
+      top: 53.79194555124246,
+      left: 84.34172690702636,
+      width: 12.316250770571173,
+      height: 2.181378262728664,
+    },
+    B: {
+      id: 'B',
+      top: 53.802901936058774,
+      left: 64.36638239093438,
+      width: 10.317335963447462,
+      height: 2.192527005290799,
+    },
+    C: {
+      id: 'C',
+      top: 65.53694976986354,
+      left: 57.033606885223364,
+      width: 1.7572826832124875,
+      height: 8.17081072623759,
+    },
+    D: {
+      id: 'D',
+      top: 36.762734434077984,
+      left: 47.05523186537909,
+      width: 1.7148062832498425,
+      height: 18.635976345127858,
+    },
+    E: {
+      id: 'E',
+      top: 39.01805107378236,
+      left: 53.54808215165399,
+      width: 1.7306519926564903,
+      height: 14.200263227770254,
+    },
   };
 }
 
