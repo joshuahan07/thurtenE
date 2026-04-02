@@ -676,8 +676,12 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                     >
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316]">
                         <span
-                          className="text-[11px] font-bold tracking-[0.18em] text-black"
-                          style={{ fontFamily: "'Playfair Display', serif" }}
+                          className="font-bold tracking-[0.18em] text-black"
+                          style={{
+                            fontFamily: "'Playfair Display', serif",
+                            // Scale letter with button size / viewport, but cap on large screens.
+                            fontSize: 'min(2.6vw, 11px)',
+                          }}
                         >
                           {id}
                         </span>
@@ -723,6 +727,9 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                 const imageAlt = `Section ${activeSectionPopup}`;
                 const isSectionA = activeSectionPopup === 'A';
 
+                // Clamp vertical position so popup doesn't get clipped off-screen on small viewports.
+                topPct = Math.min(92, Math.max(8, topPct));
+
                 return (
                   <div
                     className="absolute z-20"
@@ -732,29 +739,19 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                       transform,
                     }}
                   >
-                    <div
-                      className="relative bg-card border-2 border-[#f97316] rounded-none shadow-lg overflow-hidden"
-                      style={
-                        isSectionA
-                          ? {
-                              transform: 'scale(1.3)',
-                              transformOrigin: 'center bottom',
-                            }
-                          : undefined
-                      }
-                    >
+                    <div className="relative bg-card border-2 border-[#f97316] rounded-none shadow-lg overflow-hidden">
                       <button
                         type="button"
                         onClick={() => setActiveSectionPopup(null)}
-                        className="absolute top-1.5 right-1.5 z-10 p-1.5 rounded-full bg-black/80 text-white hover:bg-black/90 shadow-md border border-white/70"
+                        className="absolute top-1 right-1 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-black/80 text-white hover:bg-black/90 shadow-md border border-white/70"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3.5 h-3.5" />
                       </button>
                       <img
                         src={imageSrc}
                         alt={imageAlt}
                         className="block w-auto"
-                        style={{ maxHeight: '20rem' }}
+                        style={{ maxHeight: isSectionA ? '26rem' : '20rem' }}
                       />
                     </div>
                   </div>
