@@ -712,6 +712,12 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                   topPct = Math.max(0, hs.top - hs.height / 2 - 5);
                   leftPct = Math.max(20, Math.min(80, hs.left));
                   transform = 'translate(-50%, -100%)';
+
+                  // Nudge A a bit higher so its card visually tucks closer to the top
+                  // yellow border in phone view, matching how B feels.
+                  if (activeSectionPopup === 'A') {
+                    topPct = Math.max(0, topPct - 4);
+                  }
                 }
 
                 const imageSrc =
@@ -744,7 +750,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                         src={imageSrc}
                         alt={imageAlt}
                         className="block w-auto"
-                        style={{ maxHeight: '22rem' }}
+                        style={{ maxHeight: activeSectionPopup === 'A' ? '24rem' : '22rem' }}
                       />
                     </div>
                   </div>
