@@ -745,8 +745,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                       <img
                         src={imageSrc}
                         alt={imageAlt}
-                        className="block w-auto"
-                        style={{ maxHeight: '22rem' }}
+                        className="block"
+                        style={{ width: '55vw', height: 'auto' }}
                       />
                     </div>
                   </div>
