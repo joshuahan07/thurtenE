@@ -687,71 +687,33 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                   );
                 })}
             </div>
-            {/* Section popup anchored to the active hotspot when locked, showing section image from /public */}
-            {!editingHotspots &&
-              activeSectionPopup &&
-              (() => {
-                const hs = hotspots[activeSectionPopup];
-                if (!hs) return null;
-
-                // Position logic per section, but always keep popup fully inside the map.
-                let topPct = hs.top;
-                let leftPct = hs.left;
-                let transform = 'translate(-50%, -100%)';
-
-                if (activeSectionPopup === 'C' || activeSectionPopup === 'D') {
-                  // Align to the left side of the map but keep the whole card visible.
-                  leftPct = Math.max(20, Math.min(40, hs.left));
-                  topPct = Math.max(5, Math.min(80, hs.top));
-                  transform = 'translate(-50%, -50%)';
-                } else if (activeSectionPopup === 'E') {
-                  // Right side, fully visible.
-                  leftPct = Math.max(60, Math.min(90, hs.left));
-                  topPct = Math.max(5, Math.min(80, hs.top));
-                  transform = 'translate(-50%, -50%)';
-                } else {
-                  // Default (A, B): above, roughly centered over the hotspot.
-                  topPct = Math.max(0, hs.top - hs.height / 2 - 5);
-                  leftPct = Math.max(20, Math.min(80, hs.left));
-                  transform = 'translate(-50%, -100%)';
-                }
-
-                // Use the same pattern for all sections (A–E), each from its own PNG:
-                // A.png, B.png, C.png, D.png, E.png. No A-specific tweaks so A behaves
-                // exactly like the others.
-                const imageSrc = `/${activeSectionPopup}.png`;
-                const imageAlt = `Section ${activeSectionPopup}`;
-
-                // Clamp vertical position so popup doesn't get clipped off-screen on small viewports.
-                topPct = Math.min(92, Math.max(8, topPct));
-
-                return (
-                  <div
-                    className="absolute z-20"
-                    style={{
-                      top: `${topPct}%`,
-                      left: `${leftPct}%`,
-                      transform,
-                    }}
+            {/* Section popup – centered overlay on the map so every section renders at the same size */}
+            {!editingHotspots && activeSectionPopup && (
+              <div
+                className="absolute inset-0 z-20 flex items-center justify-center p-3"
+                onClick={() => setActiveSectionPopup(null)}
+              >
+                <div
+                  className="relative bg-card border-2 border-[#f97316] rounded-none shadow-lg"
+                  onClick={(e) => e.stopPropagation()}
+                  style={{ maxWidth: '90%', maxHeight: '90%', display: 'flex' }}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setActiveSectionPopup(null)}
+                    className="absolute top-1 right-1 z-10 w-5 h-5 flex items-center justify-center rounded-full bg-black/80 text-white hover:bg-black/90 shadow-md border border-white/70"
                   >
-                    <div className="relative bg-card border-2 border-[#f97316] rounded-none shadow-lg overflow-hidden">
-                      <button
-                        type="button"
-                        onClick={() => setActiveSectionPopup(null)}
-                        className="absolute top-1 right-1 z-10 w-5 h-5 flex items-center justify-center rounded-full bg-black/80 text-white hover:bg-black/90 shadow-md border border-white/70"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                      <img
-                        src={imageSrc}
-                        alt={imageAlt}
-                        className="block"
-                        style={{ width: '55vw', height: 'auto' }}
-                      />
-                    </div>
-                  </div>
-                );
-              })()}
+                    <X className="w-3 h-3" />
+                  </button>
+                  <img
+                    src={`/${activeSectionPopup}.png`}
+                    alt={`Section ${activeSectionPopup}`}
+                    className="block object-contain"
+                    style={{ maxWidth: '100%', maxHeight: '100%' }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Hotspot editing controls previously rendered here – intentionally hidden now to keep map UI clean. */}
