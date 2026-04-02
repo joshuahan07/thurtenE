@@ -24,7 +24,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Hero Header */}
-      <div className="relative overflow-hidden" style={{ minHeight: '300px' }}>
+      <div className="relative overflow-hidden" style={{ minHeight: '260px' }}>
         {/* Background image */}
         <img
           src={homeHeroBackground}
@@ -33,8 +33,8 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
         />
         {/* Dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-background" />
-        {/* Content — centered horizontally + vertically in hero */}
-        <div className="relative z-10 flex min-h-[300px] w-full flex-col items-center justify-center px-6 py-8 text-center gap-3">
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center px-6 pt-10 pb-8 text-center gap-2.5">
           {/* Full circular yellow ring completes the mark; artwork sits on white inside the circle */}
           <div className="inline-flex rounded-full p-[3px] bg-primary shadow-2xl ring-2 ring-white/35">
             <div className="rounded-full bg-white p-0.5 sm:p-1 overflow-hidden">
@@ -71,11 +71,11 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col px-5 pt-4 pb-6">
+      <div className="flex-1 flex flex-col px-5 pt-2 pb-6">
         {/* Stats row */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           {[
-            { value: '34', label: 'Booths' },
+            { value: '38', label: 'Booths' },
             { value: '3',  label: 'Days' },
             { value: 'Free', label: 'Entry' },
           ].map((item) => (
@@ -85,7 +85,10 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
             >
               <span
                 className="text-2xl font-bold text-[#0f100d]"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontVariantNumeric: 'lining-nums tabular-nums',
+                }}
               >
                 {item.value}
               </span>
@@ -95,7 +98,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
         </div>
 
         {/* Primary Actions */}
-        <div className="space-y-3 mt-auto">
+        <div className="space-y-3 mt-4">
           <button type="button" onClick={() => onNavigate('map')} className={HOME_ACTION_CLASS}>
             <Map className="w-6 h-6 shrink-0" strokeWidth={2} />
             View Interactive Map

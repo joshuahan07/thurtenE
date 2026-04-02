@@ -1,55 +1,49 @@
 import { ChevronLeft } from 'lucide-react';
 
-type ScheduleRow = {
+type StageSlot = {
   time: string;
-  title: string;
-  subtitle: string;
-  /** Optional second line (muted), e.g. wrap-up note under location */
-  subtitle2?: string;
-  badge: string;
+  act: string;
+  note?: string;
 };
 
-const SCHEDULE_ROWS: ScheduleRow[] = [
+type DaySchedule = {
+  id: string;
+  label: string;
+  slots: StageSlot[];
+};
+
+// Stage schedule based on provided sheet (by day).
+const DAY_SCHEDULES: DaySchedule[] = [
   {
-    time: '10:00 AM',
-    title: 'Gates Open',
-    subtitle: 'Main Entrance, Brookings Quad',
-    badge: 'All Day',
+    id: 'friday',
+    label: 'Friday, April 17',
+    slots: [
+      { time: '4:15 – 4:30 PM', act: 'THE MIC' },
+    ],
   },
   {
-    time: '11:30 AM',
-    title: 'Opening Ceremony',
-    subtitle: 'Live Stage, Section D',
-    badge: 'Live',
+    id: 'saturday',
+    label: 'Saturday, April 18',
+    slots: [
+      { time: '11:15 – 11:30 AM', act: 'Ghost Lights' },
+      { time: '12:15 – 1:00 PM', act: 'TKE + Chio' },
+      { time: '2:00 – 2:15 PM', act: 'Bear Nation Varsity Band' },
+      { time: '3:00 – 3:45 PM', act: 'Poetic Sounds' },
+    ],
   },
   {
-    time: '1:00 PM',
-    title: 'Scavenger Hunt Kickoff',
-    subtitle: 'All Sections — app required',
-    badge: 'Hunt',
-  },
-  {
-    time: '3:30 PM',
-    title: 'Student Band Showcase',
-    subtitle: 'Live Stage, Section D',
-    badge: 'Live',
-  },
-  {
-    time: '6:00 PM',
-    title: 'Prize Ceremony',
-    subtitle: 'Scavenger Hunt winners announced',
-    badge: 'Hunt',
-  },
-  {
-    time: '9:00 PM',
-    title: 'Wrap up',
-    subtitle: 'Clean up begins',
-    badge: 'End',
+    id: 'sunday',
+    label: 'Sunday, April 19',
+    slots: [
+      { time: '11:15 AM', act: 'Amateurs' },
+      { time: '11:45 AM', act: 'After Dark' },
+      { time: '1:00 – 1:30 PM', act: 'Jeff Lefton' },
+      { time: '2:00 – 2:15 PM', act: 'Alex + Dahlia' },
+      { time: '3:00 PM', act: 'WUSUCC' },
+      { time: '4:00 PM', act: "Rafe's Standup" },
+    ],
   },
 ];
-
-const pillClass =
-  'inline-flex items-center justify-center rounded-full bg-[rgba(232,91,26,0.12)] px-2.5 py-1 min-h-[1.75rem] text-[#E85B1A]';
 
 /** Event schedule — header matches Map / Info / Scavenger; DM Sans only on list rows. */
 export function EventScheduleScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
@@ -75,46 +69,58 @@ export function EventScheduleScreen({ onNavigate }: { onNavigate: (screen: strin
       </div>
 
       <div
-        className="flex-1 px-4 py-4 pb-28 w-full text-[#1A0E04] antialiased"
+        className="flex-1 px-4 py-4 pb-28 w-full text-[#1A0E04] antialiased space-y-4"
         style={{ fontFamily: "'DM Sans', ui-sans-serif, system-ui, sans-serif" }}
       >
-        <div className="rounded-[24px] border border-border bg-card overflow-hidden shadow border-l-4 border-l-[#ea580c]">
-          {SCHEDULE_ROWS.map((row, i) => (
-            <div
-              key={`${row.time}-${row.title}`}
-              className={`grid grid-cols-[minmax(5rem,5.25rem)_1fr_auto] sm:grid-cols-[90px_1fr_auto] gap-x-4 sm:gap-x-6 items-center px-4 py-5 sm:px-6 sm:py-6 ${
-                i > 0 ? 'border-t border-border' : ''
-              }`}
-            >
-              <div
-                className="text-[1.05rem] sm:text-[1.1rem] text-[#E85B1A] leading-[1.15] tracking-[0.05em]"
-                style={{ fontFamily: "'Bebas Neue', sans-serif" }}
+        {DAY_SCHEDULES.map((day) => (
+          <section
+            key={day.id}
+            className="rounded-[24px] border border-border bg-card overflow-hidden shadow border-l-4 border-l-[#ea580c]"
+          >
+            <header className="px-4 sm:px-6 py-3 sm:py-4 border-b border-black bg-[#f7f2e8]">
+              <h2
+                className="text-sm sm:text-base font-bold text-[#E85B1A]"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontVariantNumeric: 'lining-nums tabular-nums',
+                }}
               >
-                {row.time.toUpperCase()}
-              </div>
-              <div className="min-w-0 pr-1 py-0.5">
-                <p className="font-semibold text-[0.95rem] text-[#1A0E04] leading-snug tracking-tight">
-                  {row.title}
-                </p>
-                <p className="text-[0.82rem] font-normal text-[#7A5C3A] mt-1 leading-relaxed">
-                  {row.subtitle}
-                </p>
-                {row.subtitle2 ? (
-                  <p className="text-[0.82rem] font-normal text-[#7A5C3A] mt-1 leading-relaxed">
-                    {row.subtitle2}
-                  </p>
-                ) : null}
-              </div>
-              <div className="shrink-0 flex justify-end self-center">
-                <span
-                  className={`${pillClass} text-[0.72rem] font-bold tracking-[0.06em] uppercase whitespace-nowrap`}
+                {day.label}
+              </h2>
+            </header>
+            {day.slots.map((slot, index) => (
+              <div
+                key={`${day.id}-${slot.time}-${slot.act}-${index}`}
+                className={`grid grid-cols-[minmax(6.5rem,7rem)_1fr] sm:grid-cols-[100px_1fr] gap-x-4 sm:gap-x-6 items-center px-4 py-3.5 sm:px-6 sm:py-4 ${
+                  index > 0 ? 'border-t border-border' : ''
+                }`}
+              >
+                <div
+                  className="text-[1.05rem] sm:text-[1.1rem] text-[#E85B1A] leading-[1.15] tracking-[0.05em] whitespace-nowrap"
+                  style={{ fontFamily: "'Bebas Neue', sans-serif" }}
                 >
-                  {row.badge}
-                </span>
+                  {slot.time.toUpperCase()}
+                </div>
+                <div className="min-w-0 pr-1">
+                  <p
+                    className="font-semibold text-[0.98rem] text-[#1A0E04] leading-snug tracking-tight"
+                    style={{
+                      fontFamily: "'Playfair Display', serif",
+                      fontVariantNumeric: 'lining-nums tabular-nums',
+                    }}
+                  >
+                    {slot.act}
+                  </p>
+                  {slot.note ? (
+                    <p className="text-[0.82rem] font-normal text-[#7A5C3A] mt-0.5 leading-relaxed">
+                      {slot.note}
+                    </p>
+                  ) : null}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </section>
+        ))}
       </div>
     </div>
   );
