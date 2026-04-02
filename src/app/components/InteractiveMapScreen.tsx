@@ -543,7 +543,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
           {/* Map – static image with optional editable hotspot overlays */}
           <div
             ref={mapRef}
-            className="relative mb-6 w-full rounded-xl border-2 border-[#fb923c] shadow-xl overflow-hidden"
+            className="relative mb-6 w-full rounded-xl border-2 border-[#fb923c] shadow-xl"
             onPointerMove={(e) => {
               if (activeDrag) {
                 updateDrag(e.clientX, e.clientY);
@@ -694,35 +694,39 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                 const hs = hotspots[activeSectionPopup];
                 if (!hs) return null;
 
-                // All popups use the same fixed width so A and B look identical in size
-                const popupWidthPct = 48;
+                const pad = 2; // % padding from map edges
+                const desiredWidth = 48;
 
                 let style: CSSProperties;
 
                 if (activeSectionPopup === 'A' || activeSectionPopup === 'B') {
-                  // Above the button, anchored at top of map so tall images aren't clipped
-                  const minLeft = popupWidthPct / 2 + 2;
-                  const maxLeft = 100 - popupWidthPct / 2 - 2;
+                  // Above the button, anchored at top of map
+                  const minLeft = desiredWidth / 2 + pad;
+                  const maxLeft = 100 - desiredWidth / 2 - pad;
                   const clampedLeft = Math.max(minLeft, Math.min(maxLeft, hs.left));
                   style = {
-                    width: `${popupWidthPct}%`,
-                    top: '1%',
+                    width: `${desiredWidth}%`,
+                    top: `${pad}%`,
                     left: `${clampedLeft}%`,
                     transform: 'translateX(-50%)',
                   };
                 } else if (activeSectionPopup === 'C' || activeSectionPopup === 'D') {
                   // To the left of the button, anchored at top
+                  const spaceLeft = hs.left - hs.width / 2 - pad * 2;
+                  const w = Math.min(desiredWidth, spaceLeft);
                   style = {
-                    width: `${popupWidthPct}%`,
-                    right: `${100 - hs.left + hs.width / 2 + 1}%`,
-                    top: '1%',
+                    width: `${w}%`,
+                    left: `${pad}%`,
+                    top: `${pad}%`,
                   };
                 } else {
                   // E: to the right of the button, anchored at top
+                  const spaceRight = 100 - hs.left - hs.width / 2 - pad * 2;
+                  const w = Math.min(desiredWidth, spaceRight);
                   style = {
-                    width: `${popupWidthPct}%`,
-                    left: `${hs.left + hs.width / 2 + 1}%`,
-                    top: '1%',
+                    width: `${w}%`,
+                    right: `${pad}%`,
+                    top: `${pad}%`,
                   };
                 }
 
