@@ -694,57 +694,42 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                 const hs = hotspots[activeSectionPopup];
                 if (!hs) return null;
 
-                // Consistent popup width, with max-height capped so it stays inside the map
-                const popupWidthPct = 48;
                 const pad = 2; // % padding from map edges
 
                 let style: CSSProperties;
 
                 if (activeSectionPopup === 'A' || activeSectionPopup === 'B') {
                   // Above the button, horizontally centered on it
-                  const minLeft = popupWidthPct / 2 + pad;
-                  const maxLeft = 100 - popupWidthPct / 2 - pad;
-                  const clampedLeft = Math.max(minLeft, Math.min(maxLeft, hs.left));
                   const availableHeight = hs.top - hs.height / 2 - pad * 2;
                   style = {
-                    width: `${popupWidthPct}%`,
                     maxHeight: `${availableHeight}%`,
                     bottom: `${100 - hs.top + hs.height / 2 + 1}%`,
-                    left: `${clampedLeft}%`,
+                    left: `${Math.max(pad, Math.min(100 - pad, hs.left))}%`,
                     transform: 'translateX(-50%)',
-                    display: 'flex',
                   };
                 } else if (activeSectionPopup === 'C' || activeSectionPopup === 'D') {
                   // To the left of the button, vertically centered
-                  const availableWidth = hs.left - hs.width / 2 - pad * 2;
-                  const maxH = 100 - pad * 2;
                   const clampedTop = Math.max(pad, Math.min(100 - pad, hs.top));
                   style = {
-                    width: `${Math.min(popupWidthPct, availableWidth)}%`,
-                    maxHeight: `${maxH}%`,
+                    maxHeight: `${100 - pad * 2}%`,
                     right: `${100 - hs.left + hs.width / 2 + 1}%`,
                     top: `${clampedTop}%`,
                     transform: 'translateY(-50%)',
-                    display: 'flex',
                   };
                 } else {
                   // E: to the right of the button, vertically centered
-                  const availableWidth = 100 - hs.left - hs.width / 2 - pad * 2;
-                  const maxH = 100 - pad * 2;
                   const clampedTop = Math.max(pad, Math.min(100 - pad, hs.top));
                   style = {
-                    width: `${Math.min(popupWidthPct, availableWidth)}%`,
-                    maxHeight: `${maxH}%`,
+                    maxHeight: `${100 - pad * 2}%`,
                     left: `${hs.left + hs.width / 2 + 1}%`,
                     top: `${clampedTop}%`,
                     transform: 'translateY(-50%)',
-                    display: 'flex',
                   };
                 }
 
                 return (
                   <div className="absolute z-20" style={style}>
-                    <div className="relative border-2 border-[#f97316] rounded-none shadow-lg overflow-hidden flex-1 min-h-0">
+                    <div className="relative border-2 border-[#f97316] rounded-none shadow-lg">
                       <button
                         type="button"
                         onClick={() => setActiveSectionPopup(null)}
@@ -755,7 +740,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                       <img
                         src={`/${activeSectionPopup}.png`}
                         alt={`Section ${activeSectionPopup}`}
-                        className="block w-full h-full object-contain object-top"
+                        className="block h-auto"
+                        style={{ maxHeight: 'inherit', width: 'auto' }}
                       />
                     </div>
                   </div>
