@@ -711,20 +711,18 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                     transform: 'translateX(-50%)',
                   };
                 } else if (activeSectionPopup === 'C' || activeSectionPopup === 'D') {
-                  // To the left of the button, vertically centered
+                  // To the left of the button, anchored at top
                   style = {
                     width: `${popupWidthPct}%`,
                     right: `${100 - hs.left + hs.width / 2 + 1}%`,
-                    top: `${hs.top}%`,
-                    transform: 'translateY(-50%)',
+                    top: '1%',
                   };
                 } else {
-                  // E: to the right of the button, vertically centered
+                  // E: to the right of the button, anchored at top
                   style = {
                     width: `${popupWidthPct}%`,
                     left: `${hs.left + hs.width / 2 + 1}%`,
-                    top: `${hs.top}%`,
-                    transform: 'translateY(-50%)',
+                    top: '1%',
                   };
                 }
 
