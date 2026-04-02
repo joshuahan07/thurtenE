@@ -543,7 +543,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
           {/* Map – static image with optional editable hotspot overlays */}
           <div
             ref={mapRef}
-            className="relative mb-6 w-full rounded-xl border-2 border-[#fb923c] shadow-xl overflow-hidden"
+            className="relative mb-6 w-full rounded-xl border-2 border-[#fb923c] shadow-xl"
             onPointerMove={(e) => {
               if (activeDrag) {
                 updateDrag(e.clientX, e.clientY);
@@ -694,43 +694,57 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                 const hs = hotspots[activeSectionPopup];
                 if (!hs) return null;
 
-                // Consistent popup width (% of map container) so all sections look the same
+                // Consistent popup width, with max-height capped so it stays inside the map
                 const popupWidthPct = 48;
+                const pad = 2; // % padding from map edges
 
                 let style: CSSProperties;
 
                 if (activeSectionPopup === 'A' || activeSectionPopup === 'B') {
-                  // Above the button, horizontally centered on it (clamped to stay in bounds)
-                  const minLeft = popupWidthPct / 2;
-                  const maxLeft = 100 - popupWidthPct / 2;
+                  // Above the button, horizontally centered on it
+                  const minLeft = popupWidthPct / 2 + pad;
+                  const maxLeft = 100 - popupWidthPct / 2 - pad;
                   const clampedLeft = Math.max(minLeft, Math.min(maxLeft, hs.left));
+                  const availableHeight = hs.top - hs.height / 2 - pad * 2;
                   style = {
                     width: `${popupWidthPct}%`,
+                    maxHeight: `${availableHeight}%`,
                     bottom: `${100 - hs.top + hs.height / 2 + 1}%`,
                     left: `${clampedLeft}%`,
                     transform: 'translateX(-50%)',
+                    display: 'flex',
                   };
                 } else if (activeSectionPopup === 'C' || activeSectionPopup === 'D') {
-                  // To the left of the button, vertically centered on it
+                  // To the left of the button, vertically centered
+                  const availableWidth = hs.left - hs.width / 2 - pad * 2;
+                  const maxH = 100 - pad * 2;
+                  const clampedTop = Math.max(pad, Math.min(100 - pad, hs.top));
                   style = {
-                    width: `${popupWidthPct}%`,
+                    width: `${Math.min(popupWidthPct, availableWidth)}%`,
+                    maxHeight: `${maxH}%`,
                     right: `${100 - hs.left + hs.width / 2 + 1}%`,
-                    top: `${hs.top}%`,
+                    top: `${clampedTop}%`,
                     transform: 'translateY(-50%)',
+                    display: 'flex',
                   };
                 } else {
-                  // E: to the right of the button, vertically centered on it
+                  // E: to the right of the button, vertically centered
+                  const availableWidth = 100 - hs.left - hs.width / 2 - pad * 2;
+                  const maxH = 100 - pad * 2;
+                  const clampedTop = Math.max(pad, Math.min(100 - pad, hs.top));
                   style = {
-                    width: `${popupWidthPct}%`,
+                    width: `${Math.min(popupWidthPct, availableWidth)}%`,
+                    maxHeight: `${maxH}%`,
                     left: `${hs.left + hs.width / 2 + 1}%`,
-                    top: `${hs.top}%`,
+                    top: `${clampedTop}%`,
                     transform: 'translateY(-50%)',
+                    display: 'flex',
                   };
                 }
 
                 return (
                   <div className="absolute z-20" style={style}>
-                    <div className="relative bg-card border-2 border-[#f97316] rounded-none shadow-lg">
+                    <div className="relative bg-card border-2 border-[#f97316] rounded-none shadow-lg overflow-hidden flex-1 min-h-0">
                       <button
                         type="button"
                         onClick={() => setActiveSectionPopup(null)}
@@ -741,7 +755,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                       <img
                         src={`/${activeSectionPopup}.png`}
                         alt={`Section ${activeSectionPopup}`}
-                        className="block w-full h-auto"
+                        className="block w-full h-full object-contain object-top"
                       />
                     </div>
                   </div>
