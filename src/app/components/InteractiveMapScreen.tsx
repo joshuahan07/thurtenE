@@ -5,6 +5,31 @@ import { X, ChevronLeft, ChevronDown, List, MapPin, Star, Store } from 'lucide-r
 // Static carnival map image served from public/
 const MAP_IMAGE = '/newmap.png';
 
+// #region agent log
+function debugLog(hypothesisId: string, location: string, message: string, data: Record<string, unknown>) {
+  try {
+    fetch('http://127.0.0.1:7935/ingest/51233e9e-c4a1-4b53-8d7e-a77129e28333', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Debug-Session-Id': '1b6314',
+      },
+      body: JSON.stringify({
+        sessionId: '1b6314',
+        runId: 'initial',
+        hypothesisId,
+        location,
+        message,
+        data,
+        timestamp: Date.now(),
+      }),
+    }).catch(() => {});
+  } catch {
+    // ignore logging failures
+  }
+}
+// #endregion
+
 interface Booth {
   id: number;
   name: string;
@@ -679,8 +704,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                           className="font-bold tracking-[0.18em] text-black"
                           style={{
                             fontFamily: "'Playfair Display', serif",
-                            // Scale letter with button size / viewport, but cap on large screens.
-                            fontSize: 'min(2.6vw, 11px)',
+                            // Scale letter with button size / viewport, but keep subtle on small screens.
+                            fontSize: 'min(1.8vw, 9px)',
                           }}
                         >
                           {id}
@@ -707,7 +732,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                 if (activeSectionPopup === 'C' || activeSectionPopup === 'D') {
                   // Left side
                   const offset = 4; // percent of map width
-                  leftPct = Math.max(0, hs.left - hs.width / 2 - offset);
+                  leftPct = Math.max(22, hs.left - hs.width / 2 - offset);
                   topPct = hs.top;
                   transform = 'translate(-100%, -50%)';
                 } else if (activeSectionPopup === 'E') {
@@ -732,6 +757,15 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                 // Clamp vertical position so popup doesn't get clipped off-screen on small viewports.
                 topPct = Math.min(92, Math.max(8, topPct));
 
+                // #region agent log
+                debugLog('popup-position', 'InteractiveMapScreen.tsx:731', 'computed popup position', {
+                  section: activeSectionPopup,
+                  topPct,
+                  leftPct,
+                  transform,
+                });
+                // #endregion
+
                 return (
                   <div
                     className="absolute z-20"
@@ -745,15 +779,31 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                       <button
                         type="button"
                         onClick={() => setActiveSectionPopup(null)}
-                        className="absolute top-1 right-1 z-10 w-7 h-7 flex items-center justify-center rounded-full bg-black/80 text-white hover:bg-black/90 shadow-md border border-white/70"
+                        className="absolute top-1 right-1 z-10 w-5 h-5 flex items-center justify-center rounded-full bg-black/80 text-white hover:bg-black/90 shadow-md border border-white/70"
                       >
-                        <X className="w-3.5 h-3.5" />
+                        <X className="w-3 h-3" />
                       </button>
                       <img
                         src={imageSrc}
                         alt={imageAlt}
                         className="block w-auto"
-                        style={{ maxHeight: '20rem' }}
+                        style={{ maxHeight: '22rem' }}
+                        onLoad={(e) => {
+                          const img = e.currentTarget;
+                          const rect = img.getBoundingClientRect();
+                          const container = img.parentElement?.getBoundingClientRect();
+                          // #region agent log
+                          debugLog('popup-image-size', 'InteractiveMapScreen.tsx:758', 'popup image loaded', {
+                            section: activeSectionPopup,
+                            naturalWidth: img.naturalWidth,
+                            naturalHeight: img.naturalHeight,
+                            renderedWidth: rect.width,
+                            renderedHeight: rect.height,
+                            containerWidth: container?.width ?? null,
+                            containerHeight: container?.height ?? null,
+                          });
+                          // #endregion
+                        }}
                       />
                     </div>
                   </div>
