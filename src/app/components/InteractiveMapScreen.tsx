@@ -543,7 +543,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
           {/* Map – static image with optional editable hotspot overlays */}
           <div
             ref={mapRef}
-            className="relative mb-6 w-full rounded-xl border-2 border-[#fb923c] shadow-xl"
+            className="relative mb-6 w-full rounded-xl border-2 border-[#fb923c] shadow-xl overflow-hidden"
             onPointerMove={(e) => {
               if (activeDrag) {
                 updateDrag(e.clientX, e.clientY);
