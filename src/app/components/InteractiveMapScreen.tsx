@@ -700,13 +700,13 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                 let style: CSSProperties;
 
                 if (activeSectionPopup === 'A' || activeSectionPopup === 'B') {
-                  // Above the button, horizontally centered on it
+                  // Above the button, anchored at top of map so tall images aren't clipped
                   const minLeft = popupWidthPct / 2 + 2;
                   const maxLeft = 100 - popupWidthPct / 2 - 2;
                   const clampedLeft = Math.max(minLeft, Math.min(maxLeft, hs.left));
                   style = {
                     width: `${popupWidthPct}%`,
-                    bottom: `${100 - hs.top + hs.height / 2 + 1}%`,
+                    top: '1%',
                     left: `${clampedLeft}%`,
                     transform: 'translateX(-50%)',
                   };
