@@ -468,7 +468,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                           <div className="mt-0.5 flex items-start gap-1.5">
                             {/* Tiny bullet icon for description – match Kimi's small storefront icon */}
                             <Store className="mt-[1px] w-3.5 h-3.5 shrink-0 text-[#b49a75]" strokeWidth={2} />
-                            <p className="text-xs text-muted-foreground truncate">
+                            <p className="text-xs text-muted-foreground leading-snug break-words">
                               {booth.description}
                             </p>
                           </div>
@@ -712,18 +712,12 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                   topPct = Math.max(0, hs.top - hs.height / 2 - 5);
                   leftPct = Math.max(20, Math.min(80, hs.left));
                   transform = 'translate(-50%, -100%)';
-
-                  // Nudge A a bit higher so its card visually tucks closer to the top
-                  // yellow border in phone view, matching how B feels.
-                  if (activeSectionPopup === 'A') {
-                    topPct = Math.max(0, topPct - 4);
-                  }
                 }
 
-                const imageSrc =
-                  activeSectionPopup === 'A'
-                    ? '/new-a.png'
-                    : `/${activeSectionPopup}.png`;
+                // Use the same pattern for all sections (A–E), each from its own PNG:
+                // A.png, B.png, C.png, D.png, E.png. No A-specific tweaks so A behaves
+                // exactly like the others.
+                const imageSrc = `/${activeSectionPopup}.png`;
                 const imageAlt = `Section ${activeSectionPopup}`;
 
                 // Clamp vertical position so popup doesn't get clipped off-screen on small viewports.
@@ -750,7 +744,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                         src={imageSrc}
                         alt={imageAlt}
                         className="block w-auto"
-                        style={{ maxHeight: activeSectionPopup === 'A' ? '24rem' : '22rem' }}
+                        style={{ maxHeight: '22rem' }}
                       />
                     </div>
                   </div>
