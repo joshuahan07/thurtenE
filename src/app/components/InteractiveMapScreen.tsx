@@ -677,8 +677,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                     >
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316]">
                         <span
-                          className="text-[9px] font-bold tracking-[0.18em] text-black"
-                          style={{ fontFamily: "'Times New Roman', Times, serif" }}
+                          className="text-[9px] font-bold tracking-[0.05em] text-black"
+                          style={{ fontFamily: "'Inter', sans-serif" }}
                         >
                           {id}
                         </span>
