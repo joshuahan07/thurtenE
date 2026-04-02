@@ -5,31 +5,6 @@ import { X, ChevronLeft, ChevronDown, List, MapPin, Star, Store } from 'lucide-r
 // Static carnival map image served from public/
 const MAP_IMAGE = '/newmap.png';
 
-// #region agent log
-function debugLog(hypothesisId: string, location: string, message: string, data: Record<string, unknown>) {
-  try {
-    fetch('http://127.0.0.1:7935/ingest/51233e9e-c4a1-4b53-8d7e-a77129e28333', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Debug-Session-Id': '1b6314',
-      },
-      body: JSON.stringify({
-        sessionId: '1b6314',
-        runId: 'initial',
-        hypothesisId,
-        location,
-        message,
-        data,
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-  } catch {
-    // ignore logging failures
-  }
-}
-// #endregion
-
 interface Booth {
   id: number;
   name: string;
@@ -748,15 +723,6 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                 // Clamp vertical position so popup doesn't get clipped off-screen on small viewports.
                 topPct = Math.min(92, Math.max(8, topPct));
 
-                // #region agent log
-                debugLog('popup-position', 'InteractiveMapScreen.tsx:731', 'computed popup position', {
-                  section: activeSectionPopup,
-                  topPct,
-                  leftPct,
-                  transform,
-                });
-                // #endregion
-
                 return (
                   <div
                     className="absolute z-20"
@@ -779,22 +745,6 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                         alt={imageAlt}
                         className="block w-auto"
                         style={{ maxHeight: '22rem' }}
-                        onLoad={(e) => {
-                          const img = e.currentTarget;
-                          const rect = img.getBoundingClientRect();
-                          const container = img.parentElement?.getBoundingClientRect();
-                          // #region agent log
-                          debugLog('popup-image-size', 'InteractiveMapScreen.tsx:758', 'popup image loaded', {
-                            section: activeSectionPopup,
-                            naturalWidth: img.naturalWidth,
-                            naturalHeight: img.naturalHeight,
-                            renderedWidth: rect.width,
-                            renderedHeight: rect.height,
-                            containerWidth: container?.width ?? null,
-                            containerHeight: container?.height ?? null,
-                          });
-                          // #endregion
-                        }}
                       />
                     </div>
                   </div>
