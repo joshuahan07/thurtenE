@@ -723,9 +723,11 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                   transform = 'translate(-50%, -100%)';
                 }
 
-                const imageSrc = `/${activeSectionPopup}.png`;
+                const imageSrc =
+                  activeSectionPopup === 'A'
+                    ? '/new-a.png'
+                    : `/${activeSectionPopup}.png`;
                 const imageAlt = `Section ${activeSectionPopup}`;
-                const isSectionA = activeSectionPopup === 'A';
 
                 // Clamp vertical position so popup doesn't get clipped off-screen on small viewports.
                 topPct = Math.min(92, Math.max(8, topPct));
@@ -751,7 +753,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                         src={imageSrc}
                         alt={imageAlt}
                         className="block w-auto"
-                        style={{ maxHeight: isSectionA ? '26rem' : '20rem' }}
+                        style={{ maxHeight: '20rem' }}
                       />
                     </div>
                   </div>
