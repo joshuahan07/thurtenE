@@ -701,12 +701,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                     >
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316]">
                         <span
-                          className="font-bold tracking-[0.18em] text-black"
-                          style={{
-                            fontFamily: "'Playfair Display', serif",
-                            // Scale letter with button size / viewport, but keep subtle on small screens.
-                            fontSize: 'min(1.8vw, 9px)',
-                          }}
+                          className="text-[9px] font-bold tracking-[0.18em] text-black"
+                          style={{ fontFamily: "'Playfair Display', serif" }}
                         >
                           {id}
                         </span>
@@ -721,30 +717,25 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                 const hs = hotspots[activeSectionPopup];
                 if (!hs) return null;
 
-                // Position logic per section:
-                // - A, B: above hotspot, centered horizontally
-                // - C, D: to the LEFT of hotspot, vertically centered
-                // - E: to the RIGHT of hotspot, vertically centered
+                // Position logic per section, but always keep popup fully inside the map.
                 let topPct = hs.top;
                 let leftPct = hs.left;
                 let transform = 'translate(-50%, -100%)';
 
                 if (activeSectionPopup === 'C' || activeSectionPopup === 'D') {
-                  // Left side
-                  const offset = 4; // percent of map width
-                  leftPct = Math.max(22, hs.left - hs.width / 2 - offset);
-                  topPct = hs.top;
-                  transform = 'translate(-100%, -50%)';
+                  // Align to the left side of the map but keep the whole card visible.
+                  leftPct = Math.max(20, Math.min(40, hs.left));
+                  topPct = Math.max(5, Math.min(80, hs.top));
+                  transform = 'translate(-50%, -50%)';
                 } else if (activeSectionPopup === 'E') {
-                  // Right side
-                  const offset = 4;
-                  leftPct = Math.min(100, hs.left + hs.width / 2 + offset);
-                  topPct = hs.top;
-                  transform = 'translate(0, -50%)';
+                  // Right side, fully visible.
+                  leftPct = Math.max(60, Math.min(90, hs.left));
+                  topPct = Math.max(5, Math.min(80, hs.top));
+                  transform = 'translate(-50%, -50%)';
                 } else {
-                  // Default (A, B): above
+                  // Default (A, B): above, roughly centered over the hotspot.
                   topPct = Math.max(0, hs.top - hs.height / 2 - 5);
-                  leftPct = hs.left;
+                  leftPct = Math.max(20, Math.min(80, hs.left));
                   transform = 'translate(-50%, -100%)';
                 }
 
