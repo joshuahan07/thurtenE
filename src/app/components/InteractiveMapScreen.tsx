@@ -150,14 +150,8 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
   const [hotspots, setHotspots] = useState<Record<MapHotspotId, MapHotspot>>(() =>
     loadSavedHotspots()
   );
-  const [editingHotspots, setEditingHotspots] = useState<boolean>(() => {
-    try {
-      // First time (no saved layout): start in edit mode so boxes are visible immediately.
-      return !localStorage.getItem(HOTSPOT_STORAGE_KEY);
-    } catch {
-      return false;
-    }
-  });
+  // Editing mode is now internal-only; end users always see the locked button view.
+  const [editingHotspots] = useState<boolean>(false);
   const [activeSectionPopup, setActiveSectionPopup] = useState<MapHotspotId | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [openSections, setOpenSections] = useState<Record<MapHotspotId, boolean>>({
@@ -650,7 +644,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                         setActiveSectionPopup((current) => (current === id ? null : id));
                       }}
                     >
-                      <div className="w-full h-full flex items-center justify-center bg-[#fb923c]">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316]">
                         <span
                           className="text-[11px] font-bold tracking-[0.18em] text-black"
                           style={{ fontFamily: "'Playfair Display', serif" }}

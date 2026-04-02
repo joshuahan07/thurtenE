@@ -79,7 +79,7 @@ export function EventScheduleScreen({ onNavigate }: { onNavigate: (screen: strin
           >
             <header className="px-4 sm:px-6 py-3 sm:py-4 border-b border-black bg-[#f7f2e8]">
               <h2
-                className="text-sm sm:text-base font-bold text-[#E85B1A]"
+                className="text-sm sm:text-base font-bold text-foreground"
                 style={{
                   fontFamily: "'Playfair Display', serif",
                   fontVariantNumeric: 'lining-nums tabular-nums',
