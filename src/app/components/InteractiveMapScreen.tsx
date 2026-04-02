@@ -543,7 +543,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
           {/* Map – static image with optional editable hotspot overlays */}
           <div
             ref={mapRef}
-            className="relative mb-6 w-full rounded-xl overflow-hidden border-2 border-[#fb923c] shadow-xl"
+            className="relative mb-6 w-full rounded-xl border-2 border-[#fb923c] shadow-xl"
             onPointerMove={(e) => {
               if (activeDrag) {
                 updateDrag(e.clientX, e.clientY);
@@ -552,6 +552,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
             onPointerUp={endDrag}
             onPointerLeave={endDrag}
           >
+            <div className="relative rounded-xl overflow-hidden">
             <img
               src={MAP_IMAGE}
               alt="ThurtenE Carnival Map"
@@ -677,7 +678,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                       <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316]">
                         <span
                           className="text-[9px] font-bold tracking-[0.18em] text-black"
-                          style={{ fontFamily: "'Playfair Display', serif" }}
+                          style={{ fontFamily: "'Times New Roman', Times, serif" }}
                         >
                           {id}
                         </span>
@@ -685,6 +686,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                     </button>
                   );
                 })}
+            </div>
             {/* Section popup anchored to the active hotspot when locked, showing section image from /public */}
             {!editingHotspots &&
               activeSectionPopup &&
