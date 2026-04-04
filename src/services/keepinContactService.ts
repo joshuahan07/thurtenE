@@ -10,13 +10,24 @@ type UpsertCompletionInput = {
   phone: string;
 };
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function normalizeEmail(email: string): string {
-  return email.trim().toLowerCase();
+  const cleaned = email.trim().toLowerCase();
+  if (!cleaned || cleaned.length > 254 || !EMAIL_RE.test(cleaned)) {
+    throw new Error('Invalid email address.');
+  }
+  return cleaned;
 }
 
 function normalizePhone(phone: string): string | null {
   const trimmed = phone.trim();
   if (!trimmed) return null;
+  // Strip formatting, keep only digits; enforce E.164-ish length
+  const digits = trimmed.replace(/[\s\-().+]/g, '');
+  if (!/^\d{7,15}$/.test(digits)) {
+    throw new Error('Invalid phone number.');
+  }
   return trimmed;
 }
 

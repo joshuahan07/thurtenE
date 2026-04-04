@@ -12,13 +12,32 @@ export function EmailSignupScreen({ onNavigate }: { onNavigate: (screen: string)
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
-    if (!email.trim()) return;
+    const trimmedEmail = email.trim();
+    const trimmedPhone = phone.trim();
+    if (!trimmedEmail) return;
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail) || trimmedEmail.length > 254) {
+      setSubmitError('Please enter a valid email address.');
+      return;
+    }
+
+    // Validate phone format if provided (digits, spaces, dashes, parens, plus — 7-20 chars)
+    if (trimmedPhone) {
+      const phoneDigits = trimmedPhone.replace(/[\s\-().+]/g, '');
+      if (!/^\d{7,15}$/.test(phoneDigits)) {
+        setSubmitError('Please enter a valid phone number.');
+        return;
+      }
+    }
+
     setSubmitting(true);
     setSubmitError(null);
     try {
       await upsertKeepincontactSignup({
-        email,
-        phone: phone.trim() ? phone : undefined,
+        email: trimmedEmail,
+        phone: trimmedPhone || undefined,
       });
       setSubmitted(true);
     } catch {

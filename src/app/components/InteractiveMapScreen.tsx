@@ -250,6 +250,76 @@ function savePopupLayouts(next: Record<MapHotspotId, MapHotspot>): void {
   }
 }
 
+/** Invisible tap targets around A–E (visual icons stay on `hotspots`). */
+const HIT_ZONE_STORAGE_KEY = 'thurtene-map-section-hit-zones-v1';
+
+function defaultHitZones(): Record<MapHotspotId, MapHotspot> {
+  return {
+    A: {
+      id: 'A',
+      top: 53.026962523650255,
+      left: 84.51333467201792,
+      width: 17.480747513239066,
+      height: 15.065108799637493,
+    },
+    B: {
+      id: 'B',
+      top: 52.56862803097838,
+      left: 64.7855825664517,
+      width: 14.343494970238318,
+      height: 14.725237120690807,
+    },
+    C: {
+      id: 'C',
+      top: 66.63182217260263,
+      left: 56.98556025766319,
+      width: 9.936935012404987,
+      height: 12.603765341412938,
+    },
+    D: {
+      id: 'D',
+      top: 36.37306430821022,
+      left: 46.48664402094286,
+      width: 6.6621390677787105,
+      height: 23.988538441393885,
+    },
+    E: {
+      id: 'E',
+      top: 38.132799839139345,
+      left: 53.483376638034905,
+      width: 6.346966717694258,
+      height: 23.228573399449868,
+    },
+  };
+}
+
+function loadSavedHitZones(): Record<MapHotspotId, MapHotspot> {
+  try {
+    const raw = localStorage.getItem(HIT_ZONE_STORAGE_KEY);
+    if (!raw) return defaultHitZones();
+    const parsed = JSON.parse(raw) as Partial<Record<MapHotspotId, Partial<MapHotspot>>>;
+    const base = defaultHitZones();
+    (['A', 'B', 'C', 'D', 'E'] as MapHotspotId[]).forEach((id) => {
+      const stored = parsed?.[id];
+      if (!stored) return;
+      const clamp = (v: unknown, min: number, max: number, fallback: number) => {
+        if (typeof v !== 'number' || Number.isNaN(v)) return fallback;
+        return Math.min(max, Math.max(min, v));
+      };
+      base[id] = {
+        id,
+        top: clamp(stored.top, 0, 100, base[id].top),
+        left: clamp(stored.left, 0, 100, base[id].left),
+        width: clamp(stored.width, 1, 100, base[id].width),
+        height: clamp(stored.height, 1, 100, base[id].height),
+      };
+    });
+    return base;
+  } catch {
+    return defaultHitZones();
+  }
+}
+
 type ViewMode = 'list' | 'map';
 
 export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
@@ -262,6 +332,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
   // Editing mode is now internal-only; end users always see the locked button view.
   const [editingHotspots] = useState<boolean>(false);
   const [activeSectionPopup, setActiveSectionPopup] = useState<MapHotspotId | null>(null);
+  const [hitZones] = useState<Record<MapHotspotId, MapHotspot>>(() => loadSavedHitZones());
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [openSections, setOpenSections] = useState<Record<MapHotspotId, boolean>>({
     A: true,
@@ -735,36 +806,57 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                     </div>
                   );
                 })
-              : (['A', 'B', 'C', 'D', 'E'] as MapHotspotId[]).map((id) => {
-                  const hs = hotspots[id];
-                  return (
-                    <button
-                      key={id}
-                      type="button"
-                      aria-label={`Go to Section ${id}`}
-                      className="absolute flex items-center justify-center transition-transform transition-colors"
-                      style={{
-                        top: `${hs.top}%`,
-                        left: `${hs.left}%`,
-                        width: `${hs.width}%`,
-                        height: `${hs.height}%`,
-                        transform: 'translate(-50%, -50%)',
-                      }}
-                      onClick={() => {
-                        setActiveSectionPopup((current) => (current === id ? null : id));
-                      }}
-                    >
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316]">
-                        <span
-                          className="font-bold tracking-[0.05em] text-black"
-                          style={{ fontFamily: "'Inter', sans-serif", fontSize: '1.7vw' }}
+              : (
+                  <>
+                    {(['A', 'B', 'C', 'D', 'E'] as MapHotspotId[]).map((id) => {
+                      const hz = hitZones[id];
+                      return (
+                        <button
+                          key={`hit-${id}`}
+                          type="button"
+                          aria-label={`Open section ${id} map detail`}
+                          className="absolute z-[15] touch-manipulation bg-transparent cursor-pointer"
+                          style={{
+                            top: `${hz.top}%`,
+                            left: `${hz.left}%`,
+                            width: `${hz.width}%`,
+                            height: `${hz.height}%`,
+                            transform: 'translate(-50%, -50%)',
+                          }}
+                          onClick={() => {
+                            setActiveSectionPopup((current) => (current === id ? null : id));
+                          }}
+                        />
+                      );
+                    })}
+                    {(['A', 'B', 'C', 'D', 'E'] as MapHotspotId[]).map((id) => {
+                      const hs = hotspots[id];
+                      return (
+                        <div
+                          key={`vis-${id}`}
+                          aria-hidden
+                          className="pointer-events-none absolute z-[25] flex items-center justify-center"
+                          style={{
+                            top: `${hs.top}%`,
+                            left: `${hs.left}%`,
+                            width: `${hs.width}%`,
+                            height: `${hs.height}%`,
+                            transform: 'translate(-50%, -50%)',
+                          }}
                         >
-                          {id}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316]">
+                            <span
+                              className="font-bold tracking-[0.05em] text-black"
+                              style={{ fontFamily: "'Inter', sans-serif", fontSize: '1.7vw' }}
+                            >
+                              {id}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
             </div>
             {/* Section image popup: percent frame (editable); orange border tracks image box */}
             {!editingHotspots && activeSectionPopup && (() => {
@@ -773,7 +865,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
 
               return (
                 <div
-                  className="absolute z-20 flex items-center justify-center overflow-visible pointer-events-auto"
+                  className="absolute z-[40] flex items-center justify-center overflow-visible pointer-events-auto"
                   style={{
                     top: `${pl.top}%`,
                     left: `${pl.left}%`,

@@ -42,18 +42,13 @@ function loadSavedTasks(): Task[] {
   return initialTasks;
 }
 
-/** Progress is stored in localStorage: per device/browser only. */
-function getSavedRaffleEntry(): { name: string; phone: string } | null {
+/** Check if raffle was already submitted (no PII stored locally). */
+function hasSubmittedRaffle(): boolean {
   try {
-    const raw = localStorage.getItem(RAFFLE_ENTRY_KEY);
-    if (raw) {
-      const o = JSON.parse(raw) as { name?: string; phone?: string };
-      if (o && typeof o.name === 'string' && typeof o.phone === 'string') return o;
-    }
+    return localStorage.getItem(RAFFLE_ENTRY_KEY) === 'submitted';
   } catch {
-    // ignore
+    return false;
   }
-  return null;
 }
 
 /** Parse section letter from scanned QR (URL/hash) or raw code like SECTION-A. */
@@ -98,7 +93,7 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
 
   useEffect(() => {
     const allDone = tasks.every((t) => t.completed);
-    if (allDone && !getSavedRaffleEntry()) setShowEntryModal(true);
+    if (allDone && !hasSubmittedRaffle()) setShowEntryModal(true);
   }, [tasks]);
 
   useEffect(() => {
@@ -171,11 +166,26 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
     const name = entryName.trim();
     const phone = entryPhone.trim();
     if (!name || !phone) return;
+
+    // Validate name length
+    if (name.length > 100) {
+      setRaffleSubmitError('Name is too long.');
+      return;
+    }
+
+    // Validate phone format (digits, spaces, dashes, parens, plus — 7-15 digits)
+    const phoneDigits = phone.replace(/[\s\-().+]/g, '');
+    if (!/^\d{7,15}$/.test(phoneDigits)) {
+      setRaffleSubmitError('Please enter a valid phone number.');
+      return;
+    }
+
     setRaffleSubmitting(true);
     setRaffleSubmitError(null);
     try {
-      localStorage.setItem(RAFFLE_ENTRY_KEY, JSON.stringify({ name, phone }));
       await upsertScavengerCompletion({ name, phone });
+      // Only store a flag — no PII in localStorage
+      localStorage.setItem(RAFFLE_ENTRY_KEY, 'submitted');
       setShowEntryModal(false);
     } catch {
       setRaffleSubmitError('Could not submit your raffle info. Please try again.');
@@ -335,7 +345,7 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
           <div className="rounded-xl border-2 border-primary/60 bg-primary/20 p-5 text-center">
             <p className="text-lg font-bold text-foreground mb-2">You did it!</p>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              {getSavedRaffleEntry()
+              {hasSubmittedRaffle()
                 ? "You're entered in our raffle. We'll notify you if you win."
                 : 'Enter your details in the popup to join the gift card raffle.'}
             </p>
