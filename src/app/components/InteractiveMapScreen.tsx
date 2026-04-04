@@ -251,8 +251,6 @@ function savePopupLayouts(next: Record<MapHotspotId, MapHotspot>): void {
 }
 
 /** Invisible tap targets around A–E (visual icons stay on `hotspots`). */
-const HIT_ZONE_STORAGE_KEY = 'thurtene-map-section-hit-zones-v1';
-
 function defaultHitZones(): Record<MapHotspotId, MapHotspot> {
   return {
     A: {
@@ -286,38 +284,11 @@ function defaultHitZones(): Record<MapHotspotId, MapHotspot> {
     E: {
       id: 'E',
       top: 38.132799839139345,
-      left: 53.73649108060248,
-      width: 6.853195602829395,
+      left: 53.91966253330518,
+      width: 7.219538508234805,
       height: 23.22857339944987,
     },
   };
-}
-
-function loadSavedHitZones(): Record<MapHotspotId, MapHotspot> {
-  try {
-    const raw = localStorage.getItem(HIT_ZONE_STORAGE_KEY);
-    if (!raw) return defaultHitZones();
-    const parsed = JSON.parse(raw) as Partial<Record<MapHotspotId, Partial<MapHotspot>>>;
-    const base = defaultHitZones();
-    (['A', 'B', 'C', 'D', 'E'] as MapHotspotId[]).forEach((id) => {
-      const stored = parsed?.[id];
-      if (!stored) return;
-      const clamp = (v: unknown, min: number, max: number, fallback: number) => {
-        if (typeof v !== 'number' || Number.isNaN(v)) return fallback;
-        return Math.min(max, Math.max(min, v));
-      };
-      base[id] = {
-        id,
-        top: clamp(stored.top, 0, 100, base[id].top),
-        left: clamp(stored.left, 0, 100, base[id].left),
-        width: clamp(stored.width, 1, 100, base[id].width),
-        height: clamp(stored.height, 1, 100, base[id].height),
-      };
-    });
-    return base;
-  } catch {
-    return defaultHitZones();
-  }
 }
 
 type ViewMode = 'list' | 'map';
@@ -332,7 +303,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
   // Editing mode is now internal-only; end users always see the locked button view.
   const [editingHotspots] = useState<boolean>(false);
   const [activeSectionPopup, setActiveSectionPopup] = useState<MapHotspotId | null>(null);
-  const [hitZones] = useState<Record<MapHotspotId, MapHotspot>>(() => loadSavedHitZones());
+  const [hitZones] = useState<Record<MapHotspotId, MapHotspot>>(() => defaultHitZones());
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [openSections, setOpenSections] = useState<Record<MapHotspotId, boolean>>({
     A: true,
