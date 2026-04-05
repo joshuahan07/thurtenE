@@ -50,23 +50,19 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
           </h2>
           <div className="space-y-3">
             <div>
-              <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-0.5">Dates</p>
-              <p className="text-sm text-foreground">April 17–19, 2026</p>
-            </div>
-            <div>
               <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-1.5">Carnival Hours</p>
               <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm text-foreground">
-                <span className="font-semibold">Friday</span>
+                <span className="font-semibold">Friday (April 17)</span>
                 <span>4:00 PM – 8:00 PM</span>
-                <span className="font-semibold">Saturday</span>
+                <span className="font-semibold">Saturday (April 18)</span>
                 <span>11:00 AM – 4:30 PM</span>
-                <span className="font-semibold">Sunday</span>
+                <span className="font-semibold">Sunday (April 19)</span>
                 <span>11:00 AM – 4:30 PM</span>
               </div>
             </div>
             <div>
               <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-0.5">Location</p>
-              <p className="text-sm text-foreground">Danforth Campus, Washington University in St. Louis</p>
+              <p className="text-sm text-foreground">Danforth Campus @ WashU</p>
             </div>
             <div>
               <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-0.5">Admission</p>
