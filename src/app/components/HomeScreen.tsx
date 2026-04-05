@@ -32,7 +32,7 @@ export function HomeScreen({ onNavigate }: { onNavigate: (screen: string) => voi
           className="absolute inset-0 w-full h-full object-cover object-[center_58%]"
         />
         {/* Dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-black/35 to-background" />
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center px-6 pt-10 pb-8 text-center gap-2.5">
           {/* Full circular yellow ring completes the mark; artwork sits on white inside the circle */}
