@@ -1,7 +1,7 @@
 import { Map, Bell, ExternalLink } from 'lucide-react';
 import { SCAVENGER_HUNT_ICON_URL } from '../publicAssets';
 import heroMark from '../../assets/thurtene-hero-mark.png';
-import homeHeroBackground from '../../assets/home-hero-background.png';
+import homeHeroBackground from '../../assets/CU19-0185_0027.png';
 
 /** Yellow-to-orange gradient CTAs (shared home actions). */
 const HOME_ACTION_CLASS =

@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { X, ChevronLeft, ChevronDown, List, MapPin, Star, Store } from 'lucide-react';
-
 // Static carnival map image served from public/
 const MAP_IMAGE = '/newmap.png';
 

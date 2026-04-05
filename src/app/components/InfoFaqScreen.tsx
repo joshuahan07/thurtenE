@@ -96,7 +96,7 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
                 <button
                   onClick={() => setExpandedId(expandedId === item.id ? null : item.id)}
                   className={`w-full p-3.5 text-left flex justify-between items-center transition-colors ${
-                    expandedId === item.id ? 'bg-muted' : 'bg-card hover:bg-secondary'
+                    expandedId === item.id ? 'bg-muted' : 'bg-card hover:bg-muted/50'
                   }`}
                 >
                   <span className="font-medium text-foreground text-sm pr-2">{item.question}</span>
