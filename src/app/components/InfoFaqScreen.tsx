@@ -43,15 +43,15 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
         {/* Quick Info Card */}
         <div className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-[#ea580c]">
           <h2
-            className="text-base font-bold text-foreground mb-3 pb-2 border-b border-border text-center"
+            className="text-base font-bold text-foreground mb-3 pb-2 border-b border-border"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             Quick Info
           </h2>
-          <div className="space-y-3 text-center">
+          <div className="space-y-3">
             <div>
               <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-1.5">Carnival Hours</p>
-              <div className="inline-grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm text-foreground text-left">
+              <div className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm text-foreground">
                 <span className="font-semibold">Friday (April 17)</span>
                 <span>4:00 PM – 8:00 PM</span>
                 <span className="font-semibold">Saturday (April 18)</span>
@@ -82,7 +82,7 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
 
         {/* FAQ */}
         <div className="bg-card border border-border rounded-xl p-4 shadow border-l-4 border-l-[#ea580c]">
-          <div className="flex items-center justify-center gap-2 mb-3 pb-2 border-b border-border">
+          <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
             <HelpCircle className="w-4 h-4 text-[#ea580c]" strokeWidth={2} />
             <h2 className="text-sm font-bold text-accent uppercase tracking-widest">FAQ</h2>
           </div>
