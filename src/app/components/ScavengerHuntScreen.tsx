@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, Check, MapPin, Printer, X, Camera, ScanLine } from 'lucide-react';
+import { ChevronLeft, Check, MapPin, X, Camera, ScanLine } from 'lucide-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { upsertScavengerCompletion } from '../../services/keepinContactService';
 import { AnalyticsEventType, recordAnalyticsEvent } from '../../services/analyticsEvents';
@@ -62,7 +62,6 @@ function parseSectionFromScannedText(text: string): string | null {
 
 export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: string) => void }) {
   const [tasks, setTasks] = useState<Task[]>(loadSavedTasks);
-  const [showQrPrint, setShowQrPrint] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [scannerError, setScannerError] = useState<string | null>(null);
   const [showEntryModal, setShowEntryModal] = useState(false);
@@ -150,17 +149,6 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
   const progressPct = (completedCount / totalTasks) * 100;
   const allDone = completedCount === totalTasks;
   const isZeroComplete = completedCount === 0;
-
-  const baseUrl =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}${window.location.pathname || ''}`.replace(/\/$/, '') ||
-        window.location.origin
-      : '';
-  const sectionQrUrls = (['A', 'B', 'C', 'D', 'E'] as const).map(
-    (s) => `${baseUrl}#scavenger-section-${s}`
-  );
-  const qrImageUrl = (url: string) =>
-    `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
 
   const handleRaffleEntrySubmit = async () => {
     const name = entryName.trim();
@@ -300,46 +288,6 @@ export function ScavengerHuntScreen({ onNavigate }: { onNavigate: (screen: strin
             </div>
           ))}
         </div>
-
-        {/* Organizers: booth QR codes — collapsed */}
-        <details className="rounded-xl border-2 border-[#fb923c] bg-card/50 text-xs">
-          <summary className="cursor-pointer list-none px-3 py-3 font-medium text-muted-foreground flex items-center gap-2 [&::-webkit-details-marker]:hidden">
-            <Printer className="w-3.5 h-3.5 shrink-0" />
-            <span>Print QR codes for booths (organizers)</span>
-          </summary>
-          <div className="px-3 pb-3 pt-0 space-y-3 border-t border-border/60">
-            <button
-              type="button"
-              onClick={() => setShowQrPrint((v) => !v)}
-              className="mt-2 text-foreground font-semibold underline-offset-2 hover:underline"
-            >
-              {showQrPrint ? 'Hide codes' : 'Show codes'}
-            </button>
-            {showQrPrint && baseUrl && (
-              <div className="space-y-3">
-                <p className="text-muted-foreground leading-relaxed">
-                  Place each code in Sections A–E. Scanning opens the app and checks off that section.
-                </p>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-                  {(['A', 'B', 'C', 'D', 'E'] as const).map((section, i) => (
-                    <div key={section} className="flex flex-col items-center gap-1.5">
-                      <div className="bg-white p-2 rounded-lg">
-                        <img
-                          src={qrImageUrl(sectionQrUrls[i])}
-                          alt={`Section ${section} QR`}
-                          width={104}
-                          height={104}
-                          className="w-[104px] h-[104px]"
-                        />
-                      </div>
-                      <span className="text-[11px] font-bold text-foreground">Section {section}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        </details>
 
         {allDone && (
           <div className="rounded-xl border-2 border-primary/60 bg-primary/20 p-5 text-center">
