@@ -62,7 +62,7 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
             </div>
             <div>
               <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-0.5">Location</p>
-              <p className="text-sm text-foreground">Danforth Campus @ WashU</p>
+              <p className="text-sm text-foreground">Francis Field @ WashU</p>
             </div>
             <div>
               <p className="text-xs text-accent font-semibold uppercase tracking-wide mb-0.5">Admission</p>
@@ -70,7 +70,7 @@ export function InfoFaqScreen({ onNavigate }: { onNavigate: (screen: string) => 
             </div>
           </div>
           <a
-            href="https://maps.google.com/?q=Washington+University+in+St+Louis"
+            href="https://maps.apple.com/?q=Francis%20Field%2C%20Washington%20University%20in%20St.%20Louis%2C%20MO%2063105"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full mt-4 flex items-center justify-center gap-2 bg-gradient-to-br from-[#fbee08] via-[#ffc14a] to-[#f97316] text-[#0f100d] py-3 rounded-xl font-semibold shadow active:scale-[0.98] transition-transform hover:opacity-95"
