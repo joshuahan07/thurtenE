@@ -14,53 +14,53 @@ interface Booth {
 }
 
 const booths: Booth[] = [
-  // Section A
+  // Section A (1–9)
   { id: 1,  name: 'ALUMNI',                    description: 'Alumni Check-in',                                               x: 0, y: 0, section: 'A' },
   { id: 2,  name: 'STL ARC',                  description: 'Community Partner',                                              x: 0, y: 0, section: 'A' },
-  { id: 3,  name: 'LOCAL ON DELMAR',          description: 'Activity',                                                      x: 0, y: 0, section: 'A' },
+  { id: 3,  name: 'LOCAL ON DELMAR',          description: 'Granola bars',                                                  x: 0, y: 0, section: 'A' },
   { id: 4,  name: 'TKE & CHIO',               description: 'Turkey legs',                                                   x: 0, y: 0, section: 'A' },
   { id: 5,  name: 'RELAY FOR LIFE',           description: 'Mocktails',                                                     x: 0, y: 0, section: 'A' },
   { id: 6,  name: 'PARTNERS IN EAST ST. LOUIS', description: 'Barbeque',                                                   x: 0, y: 0, section: 'A' },
   { id: 7,  name: 'PGN',                      description: 'Snow cones',                                                    x: 0, y: 0, section: 'A' },
-  { id: 8,  name: 'CASA',                     description: 'Beef/chicken patties, yaniqueque, coquito, switcha',           x: 0, y: 0, section: 'A' },
+  { id: 8,  name: 'CASA',                     description: 'Jerk chicken, ribs, coquito, passion fruit juice',            x: 0, y: 0, section: 'A' },
   { id: 9,  name: 'ZBT',                      description: 'Tacos, quesadillas',                                            x: 0, y: 0, section: 'A' },
 
-  // Section B
-  { id: 10, name: 'DSP',                      description: 'Funnel cakes',                                                  x: 0, y: 0, section: 'B' },
-  { id: 11, name: 'KKG & SNU',                description: 'Deep fried oreos',                                              x: 0, y: 0, section: 'B' },
-  { id: 12, name: 'SAE & APHI',               description: 'Trickshot challenge, burgers',                                  x: 0, y: 0, section: 'B' },
-  { id: 13, name: 'CAMPUS CREAMERY',          description: 'Ice cream, waffles',                                            x: 0, y: 0, section: 'B' },
-  { id: 14, name: 'HKSA, TSO, JSO',           description: 'Matcha, taiyaki',                                               x: 0, y: 0, section: 'B' },
-  { id: 15, name: 'BOOKS AND BASKETBALL',     description: 'Popcorn',                                                       x: 0, y: 0, section: 'B' },
-  { id: 16, name: 'PUSO, VSA, APAMSA, CHINA CARE', description: 'Mango sticky rice, Thai tea, calamansi juice',           x: 0, y: 0, section: 'B' },
-  { id: 17, name: 'CAMPUS Y',                 description: 'Pretzels',                                                      x: 0, y: 0, section: 'B' },
+  // Section B (10–17)
+  { id: 10, name: 'CAMPUS Y',                 description: 'Pretzels',                                                      x: 0, y: 0, section: 'B' },
+  { id: 11, name: 'PUSO, VSA, APAMSA, CHINA CARE', description: 'Mango sticky rice, Thai tea, calamansi juice',           x: 0, y: 0, section: 'B' },
+  { id: 12, name: 'BOOKS AND BASKETBALL',     description: 'Popcorn',                                                       x: 0, y: 0, section: 'B' },
+  { id: 13, name: 'HKSA, TSO, JSO',           description: 'Matcha, taiyaki',                                               x: 0, y: 0, section: 'B' },
+  { id: 14, name: 'CAMPUS CREAMERY',          description: 'Ice cream, waffles',                                            x: 0, y: 0, section: 'B' },
+  { id: 15, name: 'SAE & APHI',               description: 'Trickshot challenge, burgers',                                  x: 0, y: 0, section: 'B' },
+  { id: 16, name: 'KKG & SNU',                description: 'Deep fried oreos',                                              x: 0, y: 0, section: 'B' },
+  { id: 17, name: 'DSP',                      description: 'Funnel cakes',                                                  x: 0, y: 0, section: 'B' },
 
-  // Section C
+  // Section C (18–22)
   { id: 18, name: 'DANCE MARATHON',           description: 'Hair color/style, photobooth',                                  x: 0, y: 0, section: 'C' },
   { id: 19, name: 'PDP',                      description: 'Spin-a-wheel legal trivia',                                     x: 0, y: 0, section: 'C' },
   { id: 20, name: 'SHPE',                     description: 'Pie a member, face painting',                                   x: 0, y: 0, section: 'C' },
   { id: 21, name: 'GPHI & BETA',              description: 'Mini golf',                                                     x: 0, y: 0, section: 'C' },
   { id: 22, name: 'WUPD',                     description: 'Puppies',                                                       x: 0, y: 0, section: 'C' },
 
-  // Section D
-  { id: 23, name: 'SKANDALARIS',              description: 'Candy',                                                         x: 0, y: 0, section: 'D' },
-  { id: 24, name: 'THETA XI & KD',            description: 'Italian ice',                                                   x: 0, y: 0, section: 'D' },
+  // Section D (23–29)
+  { id: 23, name: 'BEAR-Y SWEET SHOPPE',      description: 'Chocolate bars',                                                x: 0, y: 0, section: 'D' },
+  { id: 24, name: 'THETA XI & KD',            description: 'Italian soda',                                                  x: 0, y: 0, section: 'D' },
   { id: 25, name: 'VARSITY SWIM & DIVE',      description: 'Cotton candy, hot dogs, bratwursts',                           x: 0, y: 0, section: 'D' },
   { id: 26, name: 'KESEM',                    description: 'Energy drinks',                                                 x: 0, y: 0, section: 'D' },
   { id: 27, name: 'AKPSI',                    description: 'Milkshakes',                                                    x: 0, y: 0, section: 'D' },
   { id: 28, name: 'CHABAD',                   description: 'Kosher deli food',                                              x: 0, y: 0, section: 'D' },
   { id: 29, name: 'SAAC',                     description: 'Long drive competition',                                        x: 0, y: 0, section: 'D' },
 
-  // Section E
-  { id: 30, name: 'AEPI, & AEPHI',            description: 'Dunk tank',                                                     x: 0, y: 0, section: 'E' },
-  { id: 31, name: 'SIGEP',                    description: 'Pancakes',                                                      x: 0, y: 0, section: 'E' },
-  { id: 32, name: 'PHIDE',                    description: 'Donuts and mini basketball',                                    x: 0, y: 0, section: 'E' },
-  { id: 33, name: 'HABITAT FOR HUMANITY',     description: 'Tanghulu, fruit cups',                                          x: 0, y: 0, section: 'E' },
+  // Section E (30–38)
+  { id: 30, name: 'GLOBEMED',                 description: 'Esquites',                                                      x: 0, y: 0, section: 'E' },
+  { id: 31, name: 'HEART FOR THE UNHOUSED',   description: 'Crepes',                                                        x: 0, y: 0, section: 'E' },
+  { id: 32, name: 'PHI BETA SIGMA',           description: 'Smoothies',                                                     x: 0, y: 0, section: 'E' },
+  { id: 33, name: 'KAPI & LNYF',              description: 'Chocolate covered strawberries',                                x: 0, y: 0, section: 'E' },
   { id: 34, name: 'AIR',                      description: 'Frozen lemonade',                                                x: 0, y: 0, section: 'E' },
-  { id: 35, name: 'KAPI',                     description: 'Chocolate covered strawberries',                                x: 0, y: 0, section: 'E' },
-  { id: 36, name: 'IOTA KAPPA, PHI BETA SIGMA', description: 'Smoothies',                                                   x: 0, y: 0, section: 'E' },
-  { id: 37, name: 'HEART FOR THE UNHOUSED',   description: 'Crepes',                                                        x: 0, y: 0, section: 'E' },
-  { id: 38, name: 'GLOBEMED',                 description: 'Esquites',                                                      x: 0, y: 0, section: 'E' },
+  { id: 35, name: 'HABITAT FOR HUMANITY',     description: 'Tanghulu, fruit cups',                                          x: 0, y: 0, section: 'E' },
+  { id: 36, name: 'PHIDE',                    description: 'Donuts and mini basketball',                                    x: 0, y: 0, section: 'E' },
+  { id: 37, name: 'SIGEP',                    description: 'Pancakes',                                                      x: 0, y: 0, section: 'E' },
+  { id: 38, name: 'AEPI & AEPHI',             description: 'Dunk tank',                                                     x: 0, y: 0, section: 'E' },
 ];
 
 const sectionColors: Record<string, string> = {
@@ -856,7 +856,7 @@ export function InteractiveMapScreen({ onNavigate }: { onNavigate: (screen: stri
                       <X className="w-3 h-3" />
                     </button>
                     <img
-                      src={`/${activeSectionPopup}.png`}
+                      src={`/new${activeSectionPopup}.png`}
                       alt={`Section ${activeSectionPopup}`}
                       className="block max-h-full max-w-full h-auto w-auto border-2 border-[#f97316] shadow-lg"
                     />
